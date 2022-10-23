@@ -22,6 +22,6 @@ drop table books;
 INSERT INTO books (title, author, lang, document_size, year_of_publication, publishing_house, country,
                    number_of_pages, availability_in_the_library, availability_in_electronic_form, added, classification,
                    document_type, link_to_book)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ('2', 'a', 'a',  'a', 0,  'a',  'a', 9,  'a',  'a',  'a',  'a', 'a', 'a')
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ('2', 'a', 'a',  'a', 0,  'a',  'a', 9,  'a',  'a',  'a',  'a', 'a', 'a');
 
 select * from books

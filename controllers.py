@@ -17,7 +17,6 @@ class Parser:
 
     @staticmethod
     def start(url):
-        counter = 0
         time_start = time.time()
         links_to_selections = Parser.get_links_to_selections(url)
 
@@ -31,13 +30,13 @@ class Parser:
                 # print(list_of_links_to_books_by_section)
 
                 for link_on_book in list_of_links_to_books_by_section:
-                    threader.add_task(lambda : Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: counter += 1, link_on_book + ' obama')
+                    threader.add_task(lambda : Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a, link_on_book + ' obama')
 
         date_start = datetime.fromtimestamp(time_start)
-        print("The date and time is:", date_start)
+        print("------------------------------Start:", date_start)
         time_end = time.time()
         date_end = datetime.fromtimestamp(time_end)
-        print("The date and time is:", date_end)
+        print("------------------------------End:", date_end)
 
                     
 

@@ -16,6 +16,7 @@ class Threader:
         self.threads_count = threads_count
         self.currnet_running_count = 0
         self.tasks = []
+        self.total = 0
     def add_task (self, func, callback, link):
         self.tasks.append( [func, callback, link] )
         if self.currnet_running_count < self.threads_count:
@@ -29,6 +30,8 @@ class Threader:
             thread.start()
     def on_finish (self):
         self.currnet_running_count -= 1
+        self.total += 1
+        print(str((self.total / 1942) * 100) + '%\t' + str(self.total))
         if self.currnet_running_count < self.threads_count:
             self.run_new_task()
 

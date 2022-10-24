@@ -26,5 +26,5 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ('2', 'a', 'a',  'a', 0,  'a'
 
 
 
-
+select * from books WHERE link_to_book='https://www.dut.edu.ua/uploads/l_752_50513234.pdf';
 select * from books

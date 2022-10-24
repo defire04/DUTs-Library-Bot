@@ -19,14 +19,14 @@ class Parser:
             list_of_links_to_books_by_section = []
             for links in links_to_sections_within_section:
                 list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
-                # print(list_of_links_to_books_by_section)
 
                 for links_on_book in list_of_links_to_books_by_section:
                     print(links_on_book)
-                    # Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
+                    Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
 
     @staticmethod
     def get_links_to_selections(url):
+
         req = requests.get(url)
         soup = BeautifulSoup(req.content, "html.parser")
         links_to_sections = []

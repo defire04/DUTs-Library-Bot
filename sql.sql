@@ -24,4 +24,7 @@ INSERT INTO books (title, author, lang, document_size, year_of_publication, publ
                    document_type, link_to_book)
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ('2', 'a', 'a',  'a', 0,  'a',  'a', 9,  'a',  'a',  'a',  'a', 'a', 'a');
 
+
+
+
 select * from books

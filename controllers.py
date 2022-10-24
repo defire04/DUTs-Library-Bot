@@ -1,8 +1,15 @@
+from asyncio import sleep
+from threading import Thread
 from bs4 import BeautifulSoup
 import requests
 
-from database import DatabaseConnect
+# from database import DatabaseConnect
 from models import Book
+from threader import Threader
+import time  
+from datetime import datetime
+
+threader = Threader(4)
 
 
 class Parser:
@@ -10,6 +17,8 @@ class Parser:
 
     @staticmethod
     def start(url):
+        counter = 0
+        time_start = time.time()
         links_to_selections = Parser.get_links_to_selections(url)
 
         links_to_sections_within_section = []
@@ -21,17 +30,16 @@ class Parser:
                 list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
                 # print(list_of_links_to_books_by_section)
 
-                for links_on_book in list_of_links_to_books_by_section:
-                    print(links_on_book)
-                #     Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
+                for link_on_book in list_of_links_to_books_by_section:
+                    threader.add_task(lambda : Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: counter += 1, link_on_book + ' obama')
 
-        # list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(
-        #     links_to_sections_within_section[0])
-        #
-        # print(links_to_sections_within_section[0])
-        # for i in list_of_links_to_books_by_section:
-        #     print(i)
-        #     Parser.get_dict_with_book_characteristics(i)
+        date_start = datetime.fromtimestamp(time_start)
+        print("The date and time is:", date_start)
+        time_end = time.time()
+        date_end = datetime.fromtimestamp(time_end)
+        print("The date and time is:", date_end)
+
+                    
 
     @staticmethod
     def get_links_to_selections(url):
@@ -71,8 +79,6 @@ class Parser:
         soup = BeautifulSoup(req.content, "html.parser")
 
         links_to_sections_within_section = []
-        # print(url)
-        # print(soup.select(".pages_link"))
         for j in soup.select(".pages_link"):
             for link in j.findAll('a'):
                 if " »» " == link.text:
@@ -80,7 +86,6 @@ class Parser:
                     for_parse_number_of_pages = href.split("/")
 
                     for k in range(2, int(for_parse_number_of_pages[3]) + 1):
-                        # print(Parser.BASE + "/ua/lib/" + str(k) + href[9:])
                         links_to_sections_within_section.append(Parser.BASE + "/ua/lib/" + str(k) + href[9:])
         return links_to_sections_within_section
 
@@ -131,6 +136,7 @@ class Parser:
             try:
                 dict_with_book_characteristics["link_to_book"] = Parser.BASE + soup.select('.file')[0].find("a").get(
                     'href')
+                # print(dict_with_book_characteristics["link_to_book"] + ' ' + dict_with_book_characteristics['title'])
             except Exception as _ex:
                 print("[INFO] This book has no references!")
 
@@ -153,5 +159,5 @@ class Parser:
         book.document_type = dict_with_book_characteristics['Тип документу: ']
         book.link_to_book = dict_with_book_characteristics['link_to_book']
 
-        DatabaseConnect.insert(book)
+        # DatabaseConnect.insert(book)
 

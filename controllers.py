@@ -19,19 +19,11 @@ class Parser:
             list_of_links_to_books_by_section = []
             for links in links_to_sections_within_section:
                 list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
-                print(list_of_links_to_books_by_section)
+                # print(list_of_links_to_books_by_section)
 
-                # for links_on_book in list_of_links_to_books_by_section:
-                #     print(links_on_book)
-                #     Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
-
-        # list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(
-        #     links_to_sections_within_section[0])
-        #
-        # print(links_to_sections_within_section[0])
-        # for i in list_of_links_to_books_by_section:
-        #     print(i)
-        #     Parser.get_dict_with_book_characteristics(i)
+                for links_on_book in list_of_links_to_books_by_section:
+                    print(links_on_book)
+                    # Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
 
     @staticmethod
     def get_links_to_selections(url):
@@ -71,8 +63,7 @@ class Parser:
         soup = BeautifulSoup(req.content, "html.parser")
 
         links_to_sections_within_section = []
-        print(url)
-        print(soup.select(".pages_link"))
+
         for j in soup.select(".pages_link"):
             for link in j.findAll('a'):
                 if " »» " == link.text:
@@ -80,7 +71,6 @@ class Parser:
                     for_parse_number_of_pages = href.split("/")
 
                     for k in range(2, int(for_parse_number_of_pages[3]) + 1):
-                        print(Parser.BASE + "/ua/lib/" + str(k) + href[9:])
                         links_to_sections_within_section.append(Parser.BASE + "/ua/lib/" + str(k) + href[9:])
         return links_to_sections_within_section
 
@@ -131,6 +121,7 @@ class Parser:
             try:
                 dict_with_book_characteristics["link_to_book"] = Parser.BASE + soup.select('.file')[0].find("a").get(
                     'href')
+                print(dict_with_book_characteristics["link_to_book"])
             except Exception as _ex:
                 print("[INFO] This book has no references!")
 

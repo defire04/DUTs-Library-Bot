@@ -1,12 +1,11 @@
-from asyncio import sleep
-from threading import Thread
+
 from bs4 import BeautifulSoup
 import requests
 
-# from database import DatabaseConnect
+from database import DatabaseConnect
 from models import Book
 from threader import Threader
-import time  
+import time
 from datetime import datetime
 
 threader = Threader(8)
@@ -27,10 +26,16 @@ class Parser:
             list_of_links_to_books_by_section = []
             for links in links_to_sections_within_section:
                 list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
+
+                for links_on_book in list_of_links_to_books_by_section:
+                    print(links_on_book)
+                    Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
+
                 # print(list_of_links_to_books_by_section)
 
                 for link_on_book in list_of_links_to_books_by_section:
-                    threader.add_task(lambda : Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a, link_on_book + ' obama')
+                    threader.add_task(lambda: Parser.insert_book_to_db(
+                        Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a, link_on_book + ' obama')
 
         date_start = datetime.fromtimestamp(time_start)
         print("------------------------------Start:", date_start)
@@ -38,10 +43,9 @@ class Parser:
         date_end = datetime.fromtimestamp(time_end)
         print("------------------------------End:", date_end)
 
-                    
-
     @staticmethod
     def get_links_to_selections(url):
+
         req = requests.get(url)
         soup = BeautifulSoup(req.content, "html.parser")
         links_to_sections = []
@@ -78,6 +82,7 @@ class Parser:
         soup = BeautifulSoup(req.content, "html.parser")
 
         links_to_sections_within_section = []
+
         for j in soup.select(".pages_link"):
             for link in j.findAll('a'):
                 if " »» " == link.text:
@@ -135,7 +140,7 @@ class Parser:
             try:
                 dict_with_book_characteristics["link_to_book"] = Parser.BASE + soup.select('.file')[0].find("a").get(
                     'href')
-                # print(dict_with_book_characteristics["link_to_book"] + ' ' + dict_with_book_characteristics['title'])
+                print(dict_with_book_characteristics["link_to_book"])
             except Exception as _ex:
                 print("[INFO] This book has no references!")
 
@@ -159,4 +164,3 @@ class Parser:
         book.link_to_book = dict_with_book_characteristics['link_to_book']
 
         # DatabaseConnect.insert(book)
-

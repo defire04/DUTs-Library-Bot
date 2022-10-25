@@ -9,7 +9,7 @@ from threader import Threader
 import time  
 from datetime import datetime
 
-threader = Threader(4)
+threader = Threader(8)
 
 
 class Parser:

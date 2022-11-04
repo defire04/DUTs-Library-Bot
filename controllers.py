@@ -21,15 +21,18 @@ class Parser:
 
         links_to_sections_within_section = []
         for link_from_selection in links_to_selections:
-            links_to_sections_within_section = Parser.get_links_to_sections_within_section(link_from_selection)
+            links_to_sections_within_section = Parser.get_links_to_sections_within_section(
+                link_from_selection)
 
             list_of_links_to_books_by_section = []
             for links in links_to_sections_within_section:
-                list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
+                list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(
+                    links)
 
                 for links_on_book in list_of_links_to_books_by_section:
                     print(links_on_book)
-                    Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
+                    Parser.insert_book_to_db(
+                        Parser.get_dict_with_book_characteristics(links_on_book))
 
                 # print(list_of_links_to_books_by_section)
 
@@ -63,7 +66,8 @@ class Parser:
         soup = BeautifulSoup(req.content, "html.parser")
 
         for i in soup.select(".sub_pages_main_menu_items"):
-            link = str(i.get('onclick')).replace('document.location.href="', "https://www.dut.edu.ua")
+            link = str(i.get('onclick')).replace(
+                'document.location.href="', "https://www.dut.edu.ua")
             links_to_sections_within_section.append(link[:-1])
 
         temp_list_for_any_pages = []
@@ -90,7 +94,8 @@ class Parser:
                     for_parse_number_of_pages = href.split("/")
 
                     for k in range(2, int(for_parse_number_of_pages[3]) + 1):
-                        links_to_sections_within_section.append(Parser.BASE + "/ua/lib/" + str(k) + href[9:])
+                        links_to_sections_within_section.append(
+                            Parser.BASE + "/ua/lib/" + str(k) + href[9:])
         return links_to_sections_within_section
 
     @staticmethod
@@ -133,9 +138,11 @@ class Parser:
             left = i.select('.lib_details_left')
             right = i.select('.lib_details_right')
 
-            dict_with_book_characteristics["title"] = soup.select('.content_title')[0].text
+            dict_with_book_characteristics["title"] = soup.select('.content_title')[
+                0].text
             for j in range(len(right)):
-                dict_with_book_characteristics[str(left[j].text)] = str(right[j].text)
+                dict_with_book_characteristics[str(
+                    left[j].text)] = str(right[j].text)
 
             try:
                 dict_with_book_characteristics["link_to_book"] = Parser.BASE + soup.select('.file')[0].find("a").get(
@@ -156,8 +163,10 @@ class Parser:
         book.publishing_house = dict_with_book_characteristics['Видавництво: ']
         book.country = dict_with_book_characteristics['Країна, місто: ']
         book.number_of_pages = dict_with_book_characteristics['Кількість сторінок: ']
-        book.availability_in_the_library = dict_with_book_characteristics['Наявність у бібліотеці: ']
-        book.availability_in_electronic_form = dict_with_book_characteristics['Наявність в електронному вигляді: ']
+        book.availability_in_the_library = dict_with_book_characteristics[
+            'Наявність у бібліотеці: ']
+        book.availability_in_electronic_form = dict_with_book_characteristics[
+            'Наявність в електронному вигляді: ']
         book.added = dict_with_book_characteristics['Створено: ']
         book.classification = dict_with_book_characteristics['Категорія: ']
         book.document_type = dict_with_book_characteristics['Тип документу: ']

@@ -1,3 +1,4 @@
+
 import psycopg2
 from config import host, username, password, datasource
 
@@ -17,3 +18,6 @@ class DatabaseConnect:
             book.added, book.classification, book.document_type, book.link_to_book)
         DatabaseConnect.cursor.execute(sql, record_to_insert)
         DatabaseConnect.connection.commit()
+
+        DatabaseConnect.cursor.close()
+        DatabaseConnect.connection.close()

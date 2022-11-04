@@ -25,6 +25,6 @@ INSERT INTO books (title, author, lang, document_size, year_of_publication, publ
 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ('2', 'a', 'a',  'a', 0,  'a',  'a', 9,  'a',  'a',  'a',  'a', 'a', 'a');
 
 
-
+select * from books WHERE link_to_book='https://www.dut.edu.ua/uploads/l_752_50513234.pdf';
 
 select * from books

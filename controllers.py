@@ -2,46 +2,86 @@
 from bs4 import BeautifulSoup
 import requests
 
-from database import DatabaseConnect
+# from database import DatabaseConnect
 from models import Book
 from threader import Threader
 import time
 from datetime import datetime
+from performance_counter import PerformanceCounter;
 
-threader = Threader(8)
+threader = Threader(20)
+performance_counter = PerformanceCounter()
 
 
 class Parser:
     BASE = "https://www.dut.edu.ua"
-
     @staticmethod
     def start(url):
         time_start = time.time()
         links_to_selections = Parser.get_links_to_selections(url)
+        def sleeper ():
+            print('sleep1')
+            time.sleep(10)
+            print('sleep1 completed')
+        def sleeper2 ():
+            time.sleep(4)
 
+        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
+
+        list_of_all_links_to_books = []
         links_to_sections_within_section = []
         for link_from_selection in links_to_selections:
+            print('sync_task')
+            performance_counter.start()
             links_to_sections_within_section = Parser.get_links_to_sections_within_section(link_from_selection)
-
             list_of_links_to_books_by_section = []
+            performance_counter.end()
             for links in links_to_sections_within_section:
+                performance_counter.start()
+                print('sync task')
                 list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
-
-                for links_on_book in list_of_links_to_books_by_section:
-                    print(links_on_book)
-                    Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
+                performance_counter.end()
+                list_of_all_links_to_books += list_of_links_to_books_by_section
+                # !!! DISABLED SYNC
+                # for links_on_book in list_of_links_to_books_by_section:
+                #     print(links_on_book)
+                #     Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
 
                 # print(list_of_links_to_books_by_section)
-
-                for link_on_book in list_of_links_to_books_by_section:
-                    threader.add_task(lambda: Parser.insert_book_to_db(
-                        Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a, link_on_book + ' obama')
+        performance_counter.printResult()
+        input("Enter to continue!!!")
+        for link_on_book in list_of_all_links_to_books:
+            
+            threader.add_task(lambda: Parser.insert_book_to_db(
+                Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a)
 
         date_start = datetime.fromtimestamp(time_start)
         print("------------------------------Start:", date_start)
         time_end = time.time()
         date_end = datetime.fromtimestamp(time_end)
         print("------------------------------End:", date_end)
+
+    @staticmethod
+    def start_async (url): 
+
+        def parse_links_from_selection (links_to_selections):
+            for link_from_selection in links_to_selections:
+                threader.add_task(lambda: Parser.get_links_to_sections_within_section(link_from_selection), parse_links_to_sections_within_section, link_from_selection) 
+        def parse_links_to_sections_within_section(links_to_sections_within_section):
+                # print(links_to_sections_within_section)
+                for links in links_to_sections_within_section:
+                    threader.add_task(lambda: Parser.get_list_of_links_to_books_by_section(links), parse_links_on_book, links) 
+                    
+        def parse_links_on_book(list_of_all_links_to_books):
+            for link_on_book in list_of_all_links_to_books:
+                threader.add_task(lambda: Parser.insert_book_to_db(
+                    Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a, link_on_book)
+
+        parse_links_from_selection(Parser.get_links_to_selections(url))
 
     @staticmethod
     def get_links_to_selections(url):

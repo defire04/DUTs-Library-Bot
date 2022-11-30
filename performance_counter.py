@@ -13,4 +13,4 @@ class PerformanceCounter:
         self.total += time.time() - self.time_start
 
     def printResult(self):
-        print(self.total)
+        print(str(self.total / 60) + 's')

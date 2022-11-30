@@ -3,15 +3,16 @@ import random
 from time import sleep
 
 
-def run_one_by_one(func1, func2, finish):
-    result1 = func1()
+def run_one_by_one(func1, args, func2, finish):
+    result1 = func1(args)
     func2 and func2(result1)
     finish()
 
 
 class Task:
-    def __init__(self, taskFunction, callback=None, name='unnamed_task'):
+    def __init__(self, taskFunction, args, callback=None, name='unnamed_task'):
         self.function = taskFunction
+        self.args = args
         self.callback = callback
         self.name = name
 
@@ -23,8 +24,8 @@ class Threader:
         self.tasks = []
         self.total = 0
 
-    def add_task(self, func, callback):
-        self.tasks.append(Task(func, callback))
+    def add_task(self, func, args, callback=None, name='unnamed_task'):
+        self.tasks.append(Task(func, args, callback, name))
         if self.currnet_running_count < self.threads_count:
             self.run_new_task()
 
@@ -33,7 +34,7 @@ class Threader:
             task = self.tasks.pop(0)
             self.currnet_running_count += 1
             thread = threading.Thread(target=run_one_by_one, args=(
-                task.function, task.callback, self.on_finish))
+                task.function, task.args, task.callback, self.on_finish))
             thread.start()
 
     def on_finish(self):

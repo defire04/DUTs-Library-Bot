@@ -7,7 +7,7 @@ from models import Book
 from threader import Threader
 import time
 from datetime import datetime
-from performance_counter import PerformanceCounter;
+from performance_counter import PerformanceCounter
 
 threader = Threader(20)
 performance_counter = PerformanceCounter()
@@ -15,35 +15,45 @@ performance_counter = PerformanceCounter()
 
 class Parser:
     BASE = "https://www.dut.edu.ua"
+
     @staticmethod
     def start(url):
         time_start = time.time()
         links_to_selections = Parser.get_links_to_selections(url)
-        def sleeper ():
+
+        def sleeper():
             print('sleep1')
             time.sleep(10)
             print('sleep1 completed')
-        def sleeper2 ():
+
+        def sleeper2():
             time.sleep(4)
 
-        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
-        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
-        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
-        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
-        threader.add_task(sleeper, lambda a: threader.add_task(sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(
+            sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(
+            sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(
+            sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(
+            sleeper2, lambda a: print('sleep2 completed')))
+        threader.add_task(sleeper, lambda a: threader.add_task(
+            sleeper2, lambda a: print('sleep2 completed')))
 
         list_of_all_links_to_books = []
         links_to_sections_within_section = []
         for link_from_selection in links_to_selections:
             print('sync_task')
             performance_counter.start()
-            links_to_sections_within_section = Parser.get_links_to_sections_within_section(link_from_selection)
+            links_to_sections_within_section = Parser.get_links_to_sections_within_section(
+                link_from_selection)
             list_of_links_to_books_by_section = []
             performance_counter.end()
             for links in links_to_sections_within_section:
                 performance_counter.start()
                 print('sync task')
-                list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
+                list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(
+                    links)
                 performance_counter.end()
                 list_of_all_links_to_books += list_of_links_to_books_by_section
                 # !!! DISABLED SYNC
@@ -55,7 +65,7 @@ class Parser:
         performance_counter.printResult()
         input("Enter to continue!!!")
         for link_on_book in list_of_all_links_to_books:
-            
+
             threader.add_task(lambda: Parser.insert_book_to_db(
                 Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a)
 
@@ -66,16 +76,19 @@ class Parser:
         print("------------------------------End:", date_end)
 
     @staticmethod
-    def start_async (url): 
+    def start_async(url):
 
-        def parse_links_from_selection (links_to_selections):
+        def parse_links_from_selection(links_to_selections):
             for link_from_selection in links_to_selections:
-                threader.add_task(lambda: Parser.get_links_to_sections_within_section(link_from_selection), parse_links_to_sections_within_section, link_from_selection) 
+                threader.add_task(lambda: Parser.get_links_to_sections_within_section(
+                    link_from_selection), parse_links_to_sections_within_section, link_from_selection)
+
         def parse_links_to_sections_within_section(links_to_sections_within_section):
-                # print(links_to_sections_within_section)
-                for links in links_to_sections_within_section:
-                    threader.add_task(lambda: Parser.get_list_of_links_to_books_by_section(links), parse_links_on_book, links) 
-                    
+            # print(links_to_sections_within_section)
+            for links in links_to_sections_within_section:
+                threader.add_task(lambda: Parser.get_list_of_links_to_books_by_section(
+                    links), parse_links_on_book, links)
+
         def parse_links_on_book(list_of_all_links_to_books):
             for link_on_book in list_of_all_links_to_books:
                 threader.add_task(lambda: Parser.insert_book_to_db(
@@ -103,7 +116,8 @@ class Parser:
         soup = BeautifulSoup(req.content, "html.parser")
 
         for i in soup.select(".sub_pages_main_menu_items"):
-            link = str(i.get('onclick')).replace('document.location.href="', "https://www.dut.edu.ua")
+            link = str(i.get('onclick')).replace(
+                'document.location.href="', "https://www.dut.edu.ua")
             links_to_sections_within_section.append(link[:-1])
 
         temp_list_for_any_pages = []
@@ -130,7 +144,8 @@ class Parser:
                     for_parse_number_of_pages = href.split("/")
 
                     for k in range(2, int(for_parse_number_of_pages[3]) + 1):
-                        links_to_sections_within_section.append(Parser.BASE + "/ua/lib/" + str(k) + href[9:])
+                        links_to_sections_within_section.append(
+                            Parser.BASE + "/ua/lib/" + str(k) + href[9:])
         return links_to_sections_within_section
 
     @staticmethod
@@ -173,9 +188,11 @@ class Parser:
             left = i.select('.lib_details_left')
             right = i.select('.lib_details_right')
 
-            dict_with_book_characteristics["title"] = soup.select('.content_title')[0].text
+            dict_with_book_characteristics["title"] = soup.select('.content_title')[
+                0].text
             for j in range(len(right)):
-                dict_with_book_characteristics[str(left[j].text)] = str(right[j].text)
+                dict_with_book_characteristics[str(
+                    left[j].text)] = str(right[j].text)
 
             try:
                 dict_with_book_characteristics["link_to_book"] = Parser.BASE + soup.select('.file')[0].find("a").get(
@@ -196,8 +213,10 @@ class Parser:
         book.publishing_house = dict_with_book_characteristics['Видавництво: ']
         book.country = dict_with_book_characteristics['Країна, місто: ']
         book.number_of_pages = dict_with_book_characteristics['Кількість сторінок: ']
-        book.availability_in_the_library = dict_with_book_characteristics['Наявність у бібліотеці: ']
-        book.availability_in_electronic_form = dict_with_book_characteristics['Наявність в електронному вигляді: ']
+        book.availability_in_the_library = dict_with_book_characteristics[
+            'Наявність у бібліотеці: ']
+        book.availability_in_electronic_form = dict_with_book_characteristics[
+            'Наявність в електронному вигляді: ']
         book.added = dict_with_book_characteristics['Створено: ']
         book.classification = dict_with_book_characteristics['Категорія: ']
         book.document_type = dict_with_book_characteristics['Тип документу: ']

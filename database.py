@@ -1,4 +1,3 @@
-
 import psycopg2
 from config import host, username, password, datasource
 
@@ -22,3 +21,14 @@ class DatabaseConnect:
 
         DatabaseConnect.cursor.close()
         DatabaseConnect.connection.close()
+
+    @staticmethod
+    def find_by_title(title):
+        like_title = """ '%""" + title + """%';"""
+        sql = """SELECT * FROM books WHERE title LIKE""" + like_title
+
+        print(sql)
+        DatabaseConnect.cursor.execute(sql)
+        books = DatabaseConnect.cursor.fetchall()
+        print(len(books))
+        return books

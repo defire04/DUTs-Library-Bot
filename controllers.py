@@ -4,25 +4,23 @@ import requests
 
 # from database import DatabaseConnect
 from models import Book
-from threader import Threader
 import time
 from datetime import datetime
 from multiprocessing import Pool
 from performance_counter import PerformanceCounter
 
-threader = Threader(4)
 performance_counter = PerformanceCounter()
 
-# Дима, не убивай за функцию вне класса, это не специально, я её чуть позже туда засуну, просто так удобнее
 
+class ArrayProccesor:
+    @staticmethod
+    def merge_array_of_arrays(array_of_arrays):
+        merged_array = []
 
-def merge_array_of_arrays(array_of_arrays):
-    merged_array = []
+        for array in array_of_arrays:
+            merged_array.extend(array)
 
-    for array in array_of_arrays:
-        merged_array.extend(array)
-
-    return merged_array
+        return merged_array
 
 
 class Parser:
@@ -33,31 +31,26 @@ class Parser:
         time_start = time.time()
         links_to_selections = Parser.get_links_to_selections(url)
 
-        def get_book_characteristics_and_insert_to_db(link_on_book):
-            print(link_on_book)
-            Parser.insert_book_to_db(
-                Parser.get_dict_with_book_characteristics(link_on_book))
-
         links_to_sections_within_section = []
         list_of_links_to_books_by_section = []
         p = Pool(8)
         performance_counter.start()
         links_to_sections_within_section.extend(
-            merge_array_of_arrays(p.map(Parser.get_links_to_sections_within_section, links_to_selections)))
+            ArrayProccesor.merge_array_of_arrays(p.map(Parser.get_links_to_sections_within_section, links_to_selections)))
         performance_counter.end()
         performance_counter.printResult()
 
         performance_counter.start()
         list_of_links_to_books_by_section.extend(
-            merge_array_of_arrays(p.map(Parser.get_list_of_links_to_books_by_section, links_to_sections_within_section)))
+            ArrayProccesor.merge_array_of_arrays(p.map(Parser.get_list_of_links_to_books_by_section, links_to_sections_within_section)))
         print(list_of_links_to_books_by_section)
         performance_counter.end()
         performance_counter.printResult()
 
         performance_counter.start()
-
-        p.map(Parser.get_dict_with_book_characteristics,
-              list_of_links_to_books_by_section)
+        print('Total')
+        print(len(p.map(Parser.get_book_characteristics_and_insert_to_db,
+              list_of_links_to_books_by_section)))
 
         performance_counter.end()
         performance_counter.printResult()
@@ -69,56 +62,11 @@ class Parser:
         print("------------------------------End:", date_end)
 
     @staticmethod
-    def start_multithread(url):
-        links_to_selections = Parser.get_links_to_selections(url)
-
-        links_to_sections_within_section = []
-
-        for link_from_selection in links_to_selections:
-            # print(Parser.get_links_to_sections_within_section(link_from_selection))
-            threader.add_task(Parser.get_links_to_sections_within_section,
-                              link_from_selection, lambda result: print(result))
-
-            # list_of_links_to_books_by_section = []
-            # for links in links_to_sections_within_section:
-            #     list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(
-            #         links)
-
-            #     for links_on_book in list_of_links_to_books_by_section:
-            #         print(links_on_book)
-            #         Parser.insert_book_to_db(
-            #             Parser.get_dict_with_book_characteristics(links_on_book))
-
-            #     # print(list_of_links_to_books_by_section)
-
-            #     for link_on_book in list_of_links_to_books_by_section:
-            #         threader.add_task(lambda: Parser.insert_book_to_db(
-            #             Parser.get_dict_with_book_characteristics(link_on_book)))
-
-    @staticmethod
-    def start_sync(url):
-        links_to_selections = Parser.get_links_to_selections(url)
-
-        links_to_sections_within_section = []
-        for link_from_selection in links_to_selections:
-            threader.add_task(lambda: Parser.get_links_to_sections_within_section(
-                link_from_selection), lambda result: print(result))
-
-            list_of_links_to_books_by_section = []
-            for links in links_to_sections_within_section:
-                list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(
-                    links)
-
-                for links_on_book in list_of_links_to_books_by_section:
-                    print(links_on_book)
-                    Parser.insert_book_to_db(
-                        Parser.get_dict_with_book_characteristics(links_on_book))
-
-                # print(list_of_links_to_books_by_section)
-
-                for link_on_book in list_of_links_to_books_by_section:
-                    threader.add_task(lambda: Parser.insert_book_to_db(
-                        Parser.get_dict_with_book_characteristics(link_on_book)))
+    def get_book_characteristics_and_insert_to_db(link_on_book):
+        # print(link_on_book)
+        Parser.insert_book_to_db(
+            Parser.get_dict_with_book_characteristics(link_on_book))
+        return 1
 
     @staticmethod
     def get_links_to_selections(url):

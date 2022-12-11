@@ -33,7 +33,7 @@ class Parser:
 
         links_to_sections_within_section = []
         list_of_links_to_books_by_section = []
-        p = Pool(8)
+        p = Pool(16)
         performance_counter.start()
         links_to_sections_within_section.extend(
             ArrayProccesor.merge_array_of_arrays(p.map(Parser.get_links_to_sections_within_section, links_to_selections)))

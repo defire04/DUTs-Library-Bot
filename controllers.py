@@ -1,8 +1,7 @@
-
 from bs4 import BeautifulSoup
 import requests
 
-# from database import DatabaseConnect
+from database import DatabaseConnect
 from models import Book
 import time
 from datetime import datetime
@@ -36,13 +35,15 @@ class Parser:
         p = Pool(16)
         performance_counter.start()
         links_to_sections_within_section.extend(
-            ArrayProccesor.merge_array_of_arrays(p.map(Parser.get_links_to_sections_within_section, links_to_selections)))
+            ArrayProccesor.merge_array_of_arrays(
+                p.map(Parser.get_links_to_sections_within_section, links_to_selections)))
         performance_counter.end()
         performance_counter.printResult()
 
         performance_counter.start()
         list_of_links_to_books_by_section.extend(
-            ArrayProccesor.merge_array_of_arrays(p.map(Parser.get_list_of_links_to_books_by_section, links_to_sections_within_section)))
+            ArrayProccesor.merge_array_of_arrays(
+                p.map(Parser.get_list_of_links_to_books_by_section, links_to_sections_within_section)))
         print(list_of_links_to_books_by_section)
         performance_counter.end()
         performance_counter.printResult()
@@ -50,7 +51,7 @@ class Parser:
         performance_counter.start()
         print('Total')
         print(len(p.map(Parser.get_book_characteristics_and_insert_to_db,
-              list_of_links_to_books_by_section)))
+                        list_of_links_to_books_by_section)))
 
         performance_counter.end()
         performance_counter.printResult()
@@ -160,18 +161,15 @@ class Parser:
             left = i.select('.lib_details_left')
             right = i.select('.lib_details_right')
 
-            dict_with_book_characteristics["title"] = soup.select('.content_title')[
-                0].text
+            dict_with_book_characteristics["title"] = soup.select('.content_title')[0].text
             for j in range(len(right)):
                 dict_with_book_characteristics[str(
                     left[j].text)] = str(right[j].text)
-
             try:
                 dict_with_book_characteristics["link_to_book"] = Parser.BASE + soup.select('.file')[0].find("a").get(
                     'href')
-                # print(dict_with_book_characteristics["link_to_book"])
             except Exception as _ex:
-                print("[INFO] This book has no references!")
+                print("[INFO]" + dict_with_book_characteristics["title"] + " book has no references!")
 
         return dict_with_book_characteristics
 
@@ -194,4 +192,4 @@ class Parser:
         book.document_type = dict_with_book_characteristics['Тип документу: ']
         book.link_to_book = dict_with_book_characteristics['link_to_book']
 
-        # DatabaseConnect.insert(book)
+        DatabaseConnect.insert(book)

@@ -1,4 +1,3 @@
-
 from bs4 import BeautifulSoup
 import requests
 
@@ -8,40 +7,45 @@ from threader import Threader
 import time
 from datetime import datetime
 
-threader = Threader(4)
+threader = Threader(8)
 
 
 class Parser:
     BASE = "https://www.dut.edu.ua"
+    COUNT = 0
 
     @staticmethod
     def start(url):
+
         time_start = time.time()
         links_to_selections = Parser.get_links_to_selections(url)
 
         links_to_sections_within_section = []
         for link_from_selection in links_to_selections:
             links_to_sections_within_section = Parser.get_links_to_sections_within_section(link_from_selection)
+            print(links_to_sections_within_section)
 
             list_of_links_to_books_by_section = []
             for links in links_to_sections_within_section:
                 list_of_links_to_books_by_section = Parser.get_list_of_links_to_books_by_section(links)
-
                 for links_on_book in list_of_links_to_books_by_section:
-                    print(links_on_book)
+                    # print(links_on_book)
+                    Parser.COUNT += 1
+                    print(Parser.COUNT)
                     Parser.insert_book_to_db(Parser.get_dict_with_book_characteristics(links_on_book))
 
                 # print(list_of_links_to_books_by_section)
 
-                for link_on_book in list_of_links_to_books_by_section:
-                    threader.add_task(lambda: Parser.insert_book_to_db(
-                        Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a, link_on_book + ' obama')
+                # for link_on_book in list_of_links_to_books_by_section:
+                #     threader.add_task(lambda: Parser.insert_book_to_db(
+                #         Parser.get_dict_with_book_characteristics(link_on_book)), lambda a: a, link_on_book)
 
         date_start = datetime.fromtimestamp(time_start)
         print("------------------------------Start:", date_start)
         time_end = time.time()
         date_end = datetime.fromtimestamp(time_end)
         print("------------------------------End:", date_end)
+        print(Parser.COUNT)
 
     @staticmethod
     def get_links_to_selections(url):
@@ -140,7 +144,7 @@ class Parser:
             try:
                 dict_with_book_characteristics["link_to_book"] = Parser.BASE + soup.select('.file')[0].find("a").get(
                     'href')
-                print(dict_with_book_characteristics["link_to_book"])
+                # print(dict_with_book_characteristics["link_to_book"])
             except Exception as _ex:
                 print("[INFO] This book has no references!")
 

@@ -27,7 +27,25 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ('2', 'a', 'a',  'a', 0,  'a'
 
 select * from books WHERE title='Язык программирования С++. Лекции и упражнения. 5-е издание';
 
-SELECT * FROM books WHERE title LIKE '%С++%';
+SELECT * FROM books WHERE title LIKE '%Java%';
+SELECT * FROM books WHERE title LIKE '%Java%';
+SELECT * FROM books WHERE title LIKE '%C++%'; -- Engl 11
+SELECT * FROM books WHERE title LIKE '%С++%'; -- RU   10
 
-select * from books
+SELECT * FROM books WHERE title LIKE '%C#%'; -- Engl 11
+SELECT * FROM books WHERE title LIKE '%С#%'; -- RU   10
 
+select * from books where id=4;
+
+-- UPDATE Person Set fullName=?, yearOfBirth=? WHERE person_id=?
+SELECT classification, COUNT(*) as count FROM books  GROUP BY classification ;
+
+
+UPDATE books SET title = REPLACE(title ,'С++', 'C++' ) WHERE title LIKE '%С++%';
+UPDATE books SET title = REPLACE(title ,'С#', 'C#' ) WHERE title LIKE '%С#%';
+
+
+UPDATE books SET title='Самоучитель C++' where id =67;
+
+UPDATE books Set title=? WHERE id=? ('Операционная система Linux!!!', 3);
+select * from books WHERE id=364;

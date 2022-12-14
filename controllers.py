@@ -11,7 +11,7 @@ from performance_counter import PerformanceCounter
 performance_counter = PerformanceCounter()
 
 
-class ArrayProccesor:
+class ArrayProcessor:
     @staticmethod
     def merge_array_of_arrays(array_of_arrays):
         merged_array = []
@@ -35,14 +35,14 @@ class Parser:
         p = Pool(16)
         performance_counter.start()
         links_to_sections_within_section.extend(
-            ArrayProccesor.merge_array_of_arrays(
+            ArrayProcessor.merge_array_of_arrays(
                 p.map(Parser.get_links_to_sections_within_section, links_to_selections)))
         performance_counter.end()
         performance_counter.printResult()
 
         performance_counter.start()
         list_of_links_to_books_by_section.extend(
-            ArrayProccesor.merge_array_of_arrays(
+            ArrayProcessor.merge_array_of_arrays(
                 p.map(Parser.get_list_of_links_to_books_by_section, links_to_sections_within_section)))
         print(list_of_links_to_books_by_section)
         performance_counter.end()

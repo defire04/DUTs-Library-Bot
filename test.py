@@ -1,6 +1,5 @@
 from abc import abstractmethod, ABC
-import time
-from typing import Generic, List, Type, TypeVar, _SpecialGenericAlias
+from typing import Generic, TypeVar
 import json
 
 from multimethod import MultipleMeta
@@ -29,7 +28,7 @@ class Actions:
 
 class Payload(ABC):
     @abstractmethod
-    def to_shorthand_payload() -> dict:
+    def to_shorthand_payload(self) -> dict:
         pass
 
 
@@ -82,8 +81,7 @@ class ButtonAction(Generic[P]):
 
 class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
     def __init__(self, page_index: int, search_querry: str, prepared_collection_id: int):
-        payload = ButtonPageActionPayload(
-            page_index, search_querry, prepared_collection_id)
+        payload = ButtonPageActionPayload(page_index, search_querry, prepared_collection_id)
         super().__init__(Actions.SWITCH_PAGE, payload)
 
 

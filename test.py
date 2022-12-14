@@ -80,8 +80,9 @@ class ButtonAction(Generic[P]):
 
 
 class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
-    def __init__(self, page_index: int, search_querry: str, prepared_collection_id: int):
-        payload = ButtonPageActionPayload(page_index, search_querry, prepared_collection_id)
+    def __init__(self, page_index: int, prepared_collection_id: int):
+        payload = ButtonPageActionPayload(
+            page_index, prepared_collection_id)
         super().__init__(Actions.SWITCH_PAGE, payload)
 
 

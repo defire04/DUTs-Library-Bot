@@ -1,14 +1,13 @@
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-from aiogram.utils.markdown import text, code
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from config import TOKEN
 from database import DatabaseConnect
-from models import Book
+from test import PAYLOADS, ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from util import string_trim
 
-bot = Bot(token=TOKEN)
+bot = Bot(token="5942198813:AAGG8DxfQo3ZF2NGxrhIbXeLHmmLj9e6mLo")
 dp = Dispatcher(bot)
 
 
@@ -32,13 +31,29 @@ async def echo_message(msg: types.Message):
 
     for book in book_list:
         await bot.send_message(msg.from_user.id,
-                "Название книги: " + string_trim(str(book.title)) + "\n"
-                "Id в бд: " + str(book.id) + "\n"
-                "Автор: " +  string_trim(str(book.author)) + "\n"
-                "Год публикации: " + str(book.year_of_publication) + "\n"
-                "Ссылка: " + str(book.link) + "\n")
+                               "Название книги: " +
+                               string_trim(str(book.title)) + "\n"
+                               "Id в бд: " + str(book.id) + "\n"
+                               "Автор: " + string_trim(str(book.author)) + "\n"
+                               "Год публикации: " +
+                               str(book.year_of_publication) + "\n"
+                               "Ссылка: " + str(book.link) + "\n")
+
+
+action = ButtonPageAction(1, 2)
+button = InlineKeyboardButton('Text', callback_data=action.stringify())
+inline_kb_full = InlineKeyboardMarkup(row_width=2).add(button)
+
+
+@dp.callback_query_handler(lambda callback: callback.data and ButtonAction(callback.data).action == Actions.SWITCH_PAGE)
+async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
+    action = ButtonAction[ButtonPageActionPayload](callback_query.data)
+    print(action.payload.page_index)
+    print(action.payload.prepared_collection_id)
+
+    await bot.answer_callback_query(callback_query.id, text='Нажата вторая кнопка')
+
 
 if __name__ == '__main__':
     executor.start_polling(dp)
     DatabaseConnect.finalize()
-

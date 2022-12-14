@@ -1,57 +1,50 @@
 from bs4 import BeautifulSoup
 import requests
 
-from database import DatabaseConnect
-from models import Book
+from services.book_service import BookService
+from models.book import Book
 import time
 from datetime import datetime
 from multiprocessing import Pool
-from performance_counter import PerformanceCounter
+
+from util import util
+from util.performance_counter import PerformanceCounter
 
 performance_counter = PerformanceCounter()
 
 
-class ArrayProcessor:
-    @staticmethod
-    def merge_array_of_arrays(array_of_arrays):
-        merged_array = []
-
-        for array in array_of_arrays:
-            merged_array.extend(array)
-
-        return merged_array
-
-
 class Parser:
     BASE = "https://www.dut.edu.ua"
+    URL = "https://www.dut.edu.ua/ua/lib/1/category/2122"
 
     @staticmethod
-    def start(url):
+    def start():
+        print("Parser start!")
         time_start = time.time()
-        links_to_selections = Parser.get_links_to_selections(url)
+        links_to_selections = Parser.get_links_to_selections(Parser.URL)
 
         links_to_sections_within_section = []
         list_of_links_to_books_by_section = []
         p = Pool(16)
         performance_counter.start()
         links_to_sections_within_section.extend(
-            ArrayProcessor.merge_array_of_arrays(
+            util.merge_array_of_arrays(
                 p.map(Parser.get_links_to_sections_within_section, links_to_selections)))
         performance_counter.end()
         performance_counter.printResult()
 
         performance_counter.start()
         list_of_links_to_books_by_section.extend(
-            ArrayProcessor.merge_array_of_arrays(
+            util.merge_array_of_arrays(
                 p.map(Parser.get_list_of_links_to_books_by_section, links_to_sections_within_section)))
-        print(list_of_links_to_books_by_section)
+        # print(list_of_links_to_books_by_section)
         performance_counter.end()
         performance_counter.printResult()
 
         performance_counter.start()
-        print('Total')
-        print(len(p.map(Parser.get_book_characteristics_and_insert_to_db,
-                        list_of_links_to_books_by_section)))
+
+        print('Total: ' + str(len(p.map(Parser.get_book_characteristics_and_insert_to_db,
+                                        list_of_links_to_books_by_section))))
 
         performance_counter.end()
         performance_counter.printResult()
@@ -190,6 +183,6 @@ class Parser:
         book.added = dict_with_book_characteristics['Створено: ']
         book.classification = dict_with_book_characteristics['Категорія: ']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
-        book.link_to_book = dict_with_book_characteristics['link_to_book']
+        book.link = dict_with_book_characteristics['link_to_book']
 
-        DatabaseConnect.insert(book)
+        BookService.insert(book)

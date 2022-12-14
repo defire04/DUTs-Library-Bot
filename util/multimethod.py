@@ -1,4 +1,3 @@
-import time
 import inspect
 import types
 
@@ -97,35 +96,3 @@ class Spam(metaclass=MultipleMeta):
 
     def bar(self, s: str, n: int = 0):
         print('Bar 2:', s, n)
-
-
-# Example: overloaded __init__
-
-
-class Date(metaclass=MultipleMeta):
-    def __init__(self, year: int, month: int, day: int):
-        self.year = year
-        self.month = month
-        self.day = day
-
-    def __init__(self):
-        t = time.localtime()
-        self.__init__(t.tm_year, t.tm_mon, t.tm_mday)
-
-
-if __name__ == '__main__':
-    s = Spam()
-    s.bar(2, 3)
-    s.bar('hello')
-    s.bar('hello', 5)
-    try:
-        s.bar(2, 'hello')
-    except TypeError as e:
-        print(e)
-
-    # Overloaded __init__
-    d = Date(2012, 12, 21)
-    print(d.year, d.month, d.day)
-    # Get today's date
-    e = Date()
-    print(e.year, e.month, e.day)

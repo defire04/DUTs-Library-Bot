@@ -1,9 +1,8 @@
-from controllers import Parser
-from database import DatabaseConnect
-
-url = 'https://www.dut.edu.ua/ua/lib/1/category/2122'
+from controllers.parser import Parser
+from services.book_service import BookService
 
 if __name__ == '__main__':
-    Parser.start(url)
-    DatabaseConnect.replace_C()
-    DatabaseConnect.finalize()
+    BookService.clean_dataset()
+    Parser.start()
+    BookService.replace_C()
+    BookService.finalize()

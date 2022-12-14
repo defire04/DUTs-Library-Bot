@@ -1,6 +1,4 @@
-
 class Book:
-
     def __init__(self, title):
         self.title = title
 
@@ -25,11 +23,3 @@ class Book:
 
     def __str__(self) -> str:
         return str(self.id) + " " + str(self.title) + " " + str(self.author)
-
-# 332 Изучаем C# Э. Стиллмен, Д. Грин
-# 348 C# 4.0 Полное руководство Шилдт Г.
-# 397 C# 2005 для чайников Стефан Рэнди Дэвис, Чак Сфер
-# 1112 C# 2005 для чайников Стефан Рэнди Дэвис, Чак Сфер
-# SELECT * FROM books WHERE LOWER(title) LIKE '%c#%';
-
-# 384 С#. Концепція та синтаксис. Навчальний посібник Голуб Б.М.

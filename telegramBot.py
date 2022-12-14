@@ -25,11 +25,12 @@ async def echo_message(msg: types.Message):
     book_list = DatabaseConnect.find_by_title(msg.text)
 
     for book in book_list:
-
         await bot.send_message(msg.from_user.id,
-                "Название книги: " + str(book) + "\n")
-
-
+                "Название книги: " + str(book.title) + "\n"
+                "Id в бд " + str(book.id) + "\n"                          
+                "Автор: " + str(book.author) + "\n"
+                "Год публикации " + str(book.year_of_publication) + "\n"
+                "Ссылка " + str(book.link) + "\n")
 
 if __name__ == '__main__':
     executor.start_polling(dp)

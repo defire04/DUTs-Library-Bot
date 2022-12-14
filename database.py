@@ -17,19 +17,16 @@ class PagesResult:
         self.results_per_page = results_per_page
 
     def get_page(self, index: int):
-        page = self.result.data[index *
-                                self.results_per_page: (index + 1) * self.results_per_page]
+        page = self.result.data[index * self.results_per_page: (index + 1) * self.results_per_page]
         return page
 
 
 class DatabaseConnect:
-    connection = psycopg2.connect(
-        host=host, user=username, password=password, database=datasource)
+    connection = psycopg2.connect(host=host, user=username, password=password, database=datasource)
     cursor = connection.cursor()
 
     @staticmethod
     def insert(book):
-
         sql = """INSERT INTO books (title, author, lang, document_size, year_of_publication, publishing_house, 
         country, number_of_pages, availability_in_the_library, availability_in_electronic_form, added, 
         classification, document_type, link_to_book) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
@@ -47,12 +44,11 @@ class DatabaseConnect:
 
         print(sql)
         DatabaseConnect.cursor.execute(sql)
-        books = DatabaseConnect.cursor.fetchall()
+        books: List[Book] = []
 
-        b2Test = Book(books[0][1], books[0][2], books[0][3], books[0][4], books[0][5], books[0][6],
-                      books[0][7], books[0][8], books[0][9], books[0][10], books[0][11], books[0][12],
-                      books[0][13], books[0][14])
-        print(b2Test)
+        for book in DatabaseConnect.cursor.fetchall():
+            books.append(Book(book[0], book[1], book[2], book[3], book[4], book[5], book[6],
+                              book[7], book[8], book[9], book[10], book[11], book[12], book[13], book[14]))
 
         print(len(books))
         return books

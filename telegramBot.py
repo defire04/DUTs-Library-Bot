@@ -5,11 +5,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
+from config import TOKEN
 from database import DatabaseConnect
 from test import PAYLOADS, ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from util import string_trim
 
-bot = Bot(token="5942198813:AAGG8DxfQo3ZF2NGxrhIbXeLHmmLj9e6mLo")
+bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
 
 
@@ -47,9 +48,9 @@ async def echo_message(msg: types.Message):
                                "Ссылка: " + str(book.link) + "\n")
 
 
-@dp.callback_query_handler(lambda callback: callback.data and ButtonAction(callback.data).action == Actions.SWITCH_PAGE)
+@dp.callback_query_handler(lambda callback: callback.data and ButtonAction.from_json(callback.data).action == Actions.SWITCH_PAGE)
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
-    action = ButtonAction[ButtonPageActionPayload](callback_query.data)
+    action = ButtonAction.from_json(callback_query.data)
     print(action.payload.page_index)
     print(action.payload.prepared_collection_id)
 

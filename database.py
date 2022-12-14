@@ -40,7 +40,7 @@ class DatabaseConnect:
     @staticmethod
     def find_by_title(title):
         like_title = """ '%""" + title + """%';"""
-        sql = """SELECT * FROM books WHERE title LIKE""" + like_title
+        sql = """SELECT * FROM books WHERE LOWER(title) LIKE""" + like_title.lower()
 
         print(sql)
         DatabaseConnect.cursor.execute(sql)
@@ -51,7 +51,15 @@ class DatabaseConnect:
                               book[7], book[8], book[9], book[10], book[11], book[12], book[13], book[14]))
 
         print(len(books))
+        for i in books:
+            print(i)
         return books
+
+    @staticmethod
+    def replace_C():
+        sql_select = """UPDATE books SET title = REPLACE(title ,'С++', 'C++' ) WHERE title LIKE '%С++%';
+                        UPDATE books SET title = REPLACE(title ,'С#', 'C#' ) WHERE title LIKE '%С#%';"""
+        DatabaseConnect.cursor.execute(sql_select)
 
     @staticmethod
     def finalize():

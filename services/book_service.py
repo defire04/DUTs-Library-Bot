@@ -24,8 +24,7 @@ class BookService:
     @staticmethod
     def find_by_title(title):
         like_title = """ '%""" + title + """%';"""
-        sql = """SELECT * FROM books WHERE LOWER(title) LIKE""" + \
-              like_title.lower()
+        sql = """SELECT * FROM books WHERE LOWER(title) LIKE""" + like_title.lower()
 
         print(sql)
         BookService.cursor.execute(sql)
@@ -34,9 +33,7 @@ class BookService:
         for book in BookService.cursor.fetchall():
             books.append(Book.create_book(book[0], book[1], book[2], book[3], book[4], book[5], book[6],
                                           book[7], book[8], book[9], book[10], book[11], book[12], book[13], book[14]))
-
         print(len(books))
-
         return books
 
     @staticmethod

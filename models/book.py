@@ -2,25 +2,6 @@ class Book:
     def __init__(self, title):
         self.title = title
 
-    # def __init_subclass__(cls, **kwargs):
-    #     cls.id = id
-    # @classmethod
-    # def create_book(cls, title):
-    #     cls.title = title
-    #     cls.author = None
-    #     cls.lang = None
-    #     cls.document_size = None
-    #     cls.year_of_publication = 0
-    #     cls.publishing_house = None
-    #     cls.country = None
-    #     cls.number_of_pages = 0
-    #     cls.availability_in_the_library = None
-    #     cls.availability_in_electronic_form = None
-    #     cls.added = None
-    #     cls.classification = None
-    #     cls.document_type = None
-    #     cls.link = None
-
     @classmethod
     def create_book(cls, id, title, author, lang, document_size, year_of_publication, publishing_house, country,
                     number_of_pages, availability_in_the_library,

@@ -42,9 +42,9 @@ class Parser:
         performance_counter.printResult()
 
         performance_counter.start()
-
-        print('Total: ' + str(len(p.map(Parser.get_book_characteristics_and_insert_to_db,
-                                        list_of_links_to_books_by_section))))
+        print('Total')
+        print(len(p.map(Parser.get_book_characteristics_and_insert_to_db,
+                        list_of_links_to_books_by_section)))
 
         performance_counter.end()
         performance_counter.printResult()
@@ -168,6 +168,8 @@ class Parser:
 
     @staticmethod
     def insert_book_to_db(dict_with_book_characteristics):
+        print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+        # book: Book = Book.create_book(dict_with_book_characteristics['title'])
         book = Book(dict_with_book_characteristics['title'])
         book.author = dict_with_book_characteristics['Автор: ']
         book.lang = dict_with_book_characteristics['Мова документу: ']
@@ -185,4 +187,5 @@ class Parser:
         book.document_type = dict_with_book_characteristics['Тип документу: ']
         book.link = dict_with_book_characteristics['link_to_book']
 
+        print("-------------------------------------------------")
         BookService.insert(book)

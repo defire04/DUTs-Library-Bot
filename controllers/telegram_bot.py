@@ -23,12 +23,6 @@ async def process_start_command(message: types.Message):
                         reply_markup=inline_kb_full)
 
 
-
-
-
-
-
-
 @dp.message_handler()
 async def echo_message(msg: types.Message):
     if len(msg.text) < 2:
@@ -44,11 +38,11 @@ async def echo_message(msg: types.Message):
     for book in book_list:
         await bot.send_message(msg.from_user.id,
                                "Название книги: " +
-                               string_trim(str(book.title)) + "\n"
-                               "Id в бд: " + str(book.id) + "\n"
-                               "Автор: " + string_trim(str(book.author)) + "\n"
-                               "Год публикации: " +str(book.year_of_publication) + "\n"
-                               "Ссылка: " + str(book.link) + "\n")
+                                string_trim(str(book.title)) + "\n"
+                                "Id в бд: " + str(book.id) + "\n"
+                                "Автор: " + string_trim( str(book.author)) + "\n"
+                                "Год публикации: " + str(book.year_of_publication) + "\n"
+                                "Ссылка: " + str(book.link) + "\n")
 
 
 @dp.callback_query_handler(lambda callback: callback.data and ButtonAction.from_json(callback.data)

@@ -3,8 +3,8 @@ import time
 
 class PerformanceCounter:
     def __init__(self):
+        self.time_start = 0
         self.total = 0
-        self.start_time = 0
 
     def start(self):
         self.time_start = time.time()
@@ -13,4 +13,5 @@ class PerformanceCounter:
         self.total += time.time() - self.time_start
 
     def printResult(self):
-        print(str(self.total / 60) + 'min')
+        print(("{:.3}".format((self.total % 3600) / 60) + ' min'))
+

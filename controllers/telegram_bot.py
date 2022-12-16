@@ -46,7 +46,7 @@ async def echo_message(msg: types.Message):
 
 
 @dp.callback_query_handler(lambda callback: callback.data and ButtonAction.from_json(callback.data)
-                           .action == Actions.SWITCH_PAGE)
+                           .id == Actions.SWITCH_PAGE)
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     action = ButtonAction.from_json(callback_query.data)
     print(action.payload.page_index)

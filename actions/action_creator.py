@@ -60,13 +60,13 @@ P = TypeVar('P')
 
 
 class ButtonAction(Generic[P]):
-    def __init__(self, action: int, payload: P):
-        self.action = action
+    def __init__(self, action_id: int, payload: P):
+        self.id = action_id
         self.payload = payload
 
     @classmethod
-    def from_json(cls, jsonAction: str):
-        parsed_action = json.loads(jsonAction)
+    def from_json(cls, json_action: str):
+        parsed_action = json.loads(json_action)
         action = parsed_action["a"]
         payload = parsed_action["pl"]
         PayloadClass = PAYLOADS.get(action)
@@ -74,7 +74,7 @@ class ButtonAction(Generic[P]):
 
     def stringify(self):
         return json.dumps({
-            "a": self.action,
+            "a": self.id,
             "pl": self.payload.to_shorthand_payload()
         }).replace(' ', '')
 

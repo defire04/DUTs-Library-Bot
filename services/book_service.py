@@ -33,7 +33,6 @@ class BookService:
             "query_id": query_id
         }
 
-
     @staticmethod
     def find_by_title(title):
         like_title = """ '%""" + title + """%';"""
@@ -47,6 +46,23 @@ class BookService:
             books.append(Book.create_book(*book))
 
         print("Count of books by request: " + str(len(books)))
+
+        return books
+
+    @staticmethod
+    def find_book_by_ids(request_books: str):
+        request_books.replace(" ", ", ")
+        sql = """SELECT * FROM books WHERE id in (%s)"""
+        BookService.cursor.execute(sql, request_books)
+
+        return BookService.result_to_list(BookService.cursor.fetchall())
+
+    @staticmethod
+    def result_to_list(find_result):
+        books: List[Book] = []
+
+        for book in find_result:
+            books.append(Book.create_book(*book))
 
         return books
 

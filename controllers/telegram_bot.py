@@ -82,7 +82,6 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     await callback_query.message.delete()
 
 
-# if __name__ == '__main__':
 
 def start():
     executor.start_polling(dp)

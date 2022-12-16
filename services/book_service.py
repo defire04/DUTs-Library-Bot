@@ -23,6 +23,17 @@ class BookService:
         BookService.cursor.execute(sql, record_to_insert)
         BookService.connection.commit()
 
+        
+    @staticmethod
+    def find_by_title_and_create_query(title):
+        books = BookService.find_by_title()
+        query_id = QueryService.create(title, books)
+        return {
+            "books": books,
+            "query_id": query_id
+        }
+
+
     @staticmethod
     def find_by_title(title):
         like_title = """ '%""" + title + """%';"""
@@ -36,7 +47,6 @@ class BookService:
             books.append(Book.create_book(*book))
 
         print("Count of books by request: " + str(len(books)))
-        QueryService.create(title, books)
 
         return books
 

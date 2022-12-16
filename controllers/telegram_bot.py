@@ -25,14 +25,13 @@ async def process_start_command(message: types.Message):
                         reply_markup=inline_kb_full)
 
 
-def get_pages_from_search_query(search_string: str):
-    book_list = BookService.find_by_title(search_string)
+def get_search_result_from_search_query(search_string: str):
+    book_list_and_query = BookService.find_by_title_and_create_query(search_string)
 
-    if not book_list:
+    if not book_list_and_query["books"]:
         return None
 
-    search_result = SearchResult(book_list, search_string)
-    return PagesResult(search_result)
+    return SearchResult(book_list_and_query["books"], book_list_and_query["query_id"])
 
 
 @dp.message_handler()
@@ -43,14 +42,16 @@ async def echo_message(msg: types.Message):
         await bot.send_message(msg.from_user.id, "Запрос должен содержать минимум 2 символа!")
         return
 
-    pages = get_pages_from_search_query(msg.text)
+    search_result = get_search_result_from_search_query(msg.text)
+
+    pages = PagesResult(search_result)
 
     if not pages:
         await bot.send_message(msg.from_user.id, "Такой книги нет или запрос не верен!")
         return
     books_strings = []
 
-    action_for_next_button = ButtonPageAction(1, 2)
+    action_for_next_button = ButtonPageAction(1, search_result.search_query)
     next_button = InlineKeyboardButton('Text', callback_data=action_for_next_button.stringify())
     inline_kb_full = InlineKeyboardMarkup(row_width=1).add(next_button)
 
@@ -71,7 +72,7 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     print(action.payload.page_index)
     print(action.payload.prepared_collection_id)
 
-    print(QueryService.find_by_id(3).string_books_id)
+    print(QueryService.find_by_id(action.payload.prepared_collection_id).string_books_id)
     await bot.answer_callback_query(callback_query.id, text='Я хочу страницу ' + str(
         action.payload.page_index) + ' из запроса под id: ' + str(action.payload.prepared_collection_id))
 

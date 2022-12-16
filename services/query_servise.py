@@ -5,7 +5,7 @@ import psycopg2
 from models.book import Book
 from models.query import Query
 from resources.config import host, username, password, datasource
-from services.book_service import BookService
+
 
 
 class QueryService:
@@ -37,7 +37,6 @@ class QueryService:
 
     @staticmethod
     def find_by_id(id):
-
         sql = "SELECT * FROM query WHERE id = " + str(id)
         print(sql)
         QueryService.cursor.execute(sql)
@@ -45,15 +44,6 @@ class QueryService:
         query = Query(*tuple_query[0])
 
         return query
-
-    @staticmethod
-    def find_books_by_query_id(query_id):
-        sql = "SELECT * FROM query WHERE id = " + str(query_id)
-        QueryService.cursor.execute(sql)
-        tuple_query = QueryService.cursor.fetchall()
-        query = Query(*tuple_query[0])
-
-        return BookService.find_book_by_ids(query.string_books_id)
 
 
     @staticmethod

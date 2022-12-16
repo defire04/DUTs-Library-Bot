@@ -22,11 +22,17 @@ class QueryService:
 
     @staticmethod
     def insert(search_string, string_books_id):
-        sql = """INSERT INTO query(search_string, string_books_id) VALUES (%s, %s)"""
+        sql = """INSERT INTO query(search_string, string_books_id) VALUES (%s, %s);"""
         print(sql)
         record_to_insert = (search_string, string_books_id)
         QueryService.cursor.execute(sql, record_to_insert)
+
+        sql = """SELECT currval(pg_get_serial_sequence('query','id'));"""
+        QueryService.cursor.execute(sql)
         QueryService.connection.commit()
+        tuple_insert_id = QueryService.cursor.fetchall()
+
+        return tuple_insert_id[0][0]
 
     @staticmethod
     def find_by_id(id):

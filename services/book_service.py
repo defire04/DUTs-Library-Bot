@@ -36,7 +36,7 @@ class BookService:
             books.append(Book.create_book(*book))
 
         print("Count of books by request: " + str(len(books)))
-        QueryService.create(sql, books)
+        QueryService.create(title, books)
 
         return books
 

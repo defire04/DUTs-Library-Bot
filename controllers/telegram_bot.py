@@ -3,7 +3,6 @@ from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from controllers.parser import Parser
 from models.search_result import PagesResult, SearchResult
 from resources.config import TOKEN
 from services.book_service import BookService
@@ -58,10 +57,11 @@ async def echo_message(msg: types.Message):
 
     for book in pages.get_page(0):
         books_strings.append("Название книги: " + string_trim(str(book.title)) + "\n"
-                             "Id в бд: " + str(book.id) + "\n"
-                             "Автор: " + string_trim(str(book.author)) + "\n"
-                             "Год публикации: " + str(book.year_of_publication) + "\n"
-                             "Ссылка: " + str(book.link) + "\n")
+                                                                                 "Id в бд: " + str(book.id) + "\n"
+                                                                                                              "Автор: " + string_trim(
+            str(book.author)) + "\n"
+                                "Год публикации: " + str(book.year_of_publication) + "\n"
+                                                                                     "Ссылка: " + str(book.link) + "\n")
 
     await bot.send_message(msg.from_user.id, "\n".join(books_strings), reply_markup=inline_kb_full)
 
@@ -78,7 +78,9 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
         action.payload.page_index) + ' из запроса под id: ' + str(action.payload.prepared_collection_id))
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
+
+def start():
     executor.start_polling(dp)
     BookService.finalize()
     QueryService.finalize()

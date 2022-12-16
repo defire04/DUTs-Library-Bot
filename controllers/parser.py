@@ -10,7 +10,8 @@ from multiprocessing import Pool
 from util import util
 from util.performance_counter import PerformanceCounter
 
-performance_counter = PerformanceCounter()
+process_counter = PerformanceCounter()
+program_counter = PerformanceCounter()
 
 
 class Parser:
@@ -20,44 +21,42 @@ class Parser:
     @staticmethod
     def start():
         print("Parser start!")
-        time_start = time.time()
+
+        program_counter.start()
         links_to_selections = Parser.get_links_to_selections(Parser.URL)
 
         links_to_sections_within_section = []
         list_of_links_to_books_by_section = []
-        p = Pool(16)
-        performance_counter.start()
+        p = Pool(8)
+
+        process_counter.start()
         links_to_sections_within_section.extend(
             util.merge_array_of_arrays(
                 p.map(Parser.get_links_to_sections_within_section, links_to_selections)))
-        performance_counter.end()
-        performance_counter.printResult()
+        process_counter.end()
+        process_counter.printResult()
 
-        performance_counter.start()
+        process_counter.start()
         list_of_links_to_books_by_section.extend(
             util.merge_array_of_arrays(
                 p.map(Parser.get_list_of_links_to_books_by_section, links_to_sections_within_section)))
         # print(list_of_links_to_books_by_section)
-        performance_counter.end()
-        performance_counter.printResult()
+        process_counter.end()
+        process_counter.printResult()
 
-        performance_counter.start()
+        process_counter.start()
         count_of_books = len(p.map(Parser.get_book_characteristics_and_insert_to_db,
                                    list_of_links_to_books_by_section))
         print('Count of books : ' + str(count_of_books))
-        performance_counter.end()
-        performance_counter.printResult()
+        process_counter.end()
+        process_counter.printResult()
+        program_counter.end()
 
-        time_end = time.time()
+        print("Start:", datetime.fromtimestamp(program_counter.time_start))
+        print("End:", datetime.fromtimestamp(time.time()))
 
-        date_start = datetime.fromtimestamp(time_start)
-        print("Start:", date_start)
 
-        date_end = datetime.fromtimestamp(time_end)
-        print("End:", date_end)
-
-        work_time = ("{:.3}".format(((time_end - time_start) % 3600) / 60) + ' min')
-        print(work_time)
+        return program_counter.printResult()
 
     @staticmethod
     def get_book_characteristics_and_insert_to_db(link_on_book):

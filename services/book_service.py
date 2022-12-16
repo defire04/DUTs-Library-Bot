@@ -5,13 +5,12 @@ from models.book import Book
 
 
 class BookService:
-    connection = psycopg2.connect(
-        host=host, user=username, password=password, database=datasource)
+    connection = psycopg2.connect(host=host, user=username, password=password, database=datasource)
     cursor = connection.cursor()
 
     @staticmethod
     def insert(book):
-        sql = """INSERT INTO books (title, author, lang, document_size, year_of_publication, publishing_house, 
+        sql = """INSERT INTO books_final (title, author, lang, document_size, year_of_publication, publishing_house, 
         country, number_of_pages, availability_in_the_library, availability_in_electronic_form, added, 
         classification, document_type, link_to_book) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
         record_to_insert = (
@@ -37,7 +36,7 @@ class BookService:
         return books
 
     @staticmethod
-    def replace_C():
+    def replace_c():
         sql_select = """UPDATE books SET title = REPLACE(title ,'С++', 'C++' ) WHERE title LIKE '%С++%';
                         UPDATE books SET title = REPLACE(title ,'С#', 'C#' ) WHERE title LIKE '%С#%';"""
         BookService.cursor.execute(sql_select)

@@ -2,6 +2,8 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from controllers.keyboard_controller import KeyboardController
+from controllers.message_controller import MessageController
 from models.search_result import PagesResult, SearchResult
 
 
@@ -45,51 +47,39 @@ async def echo_message(msg: types.Message):
 
     search_result = get_search_result_from_search_query(msg.text)
     pages = PagesResult(search_result)
-    await msg.delete()
-
+    
     if not pages:
         await bot.send_message(msg.from_user.id, "Такой книги нет или запрос не верен!")
         return
-    books_strings = []
 
-    action_for_next_button = ButtonPageAction(1, int(search_result.search_query))
-    next_button = InlineKeyboardButton('Text', callback_data=action_for_next_button.stringify())
-    inline_kb_full = InlineKeyboardMarkup(row_width=1).add(next_button)
+    page_index = 0
 
-    for book in pages.get_page(0):
-        books_strings.append("Название книги: " + string_trim(str(book.title)) + "\n"
-                            "Id в бд: " + str(book.id) + "\n"
-                            "Автор: " + string_trim(str(book.author)) + "\n"
-                            "Год публикации: " + str(book.year_of_publication) + "\n"
-                            "Ссылка: " + str(book.link) + "\n")
+    keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
 
-    await bot.send_message(msg.from_user.id, "\n".join(books_strings), reply_markup=inline_kb_full)
+    message = MessageController.preapare_page_message(pages.get_page(page_index))
+
+    await bot.send_message(msg.from_user.id, message, reply_markup=keyboard)
+    await msg.delete()
 
 
-@dp.callback_query_handler(lambda callback: callback.data and ButtonAction.from_json(callback.data)
-                           .id == Actions.SWITCH_PAGE)
+@dp.callback_query_handler(lambda callback: callback.data and ButtonAction.from_json(callback.data).id == Actions.SWITCH_PAGE)
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
+    
     action = ButtonAction[ButtonPageActionPayload].from_json(callback_query.data)
-    print(action.payload.page_index)
-    print(action.payload.prepared_collection_id)
-    print(QueryService.find_by_id(action.payload.prepared_collection_id).string_books_id)
-    await bot.answer_callback_query(callback_query.id, text='Я хочу страницу ' + str(
-        action.payload.page_index) + ' из запроса под id: ' + str(action.payload.prepared_collection_id))
-    await callback_query.message.delete()
-    books_strings = []
-    action.payload.page_index += 1
-    next_button = InlineKeyboardButton('Next', callback_data=action.stringify())
-    inline_kb_full = InlineKeyboardMarkup(row_width=1).add(next_button)
-    search_result = get_search_result_from_search_query('C++')
-    pages = PagesResult(search_result)
-    for book in pages.get_page(action.payload.page_index):
-        books_strings.append("Название книги: " + string_trim(str(book.title)) + "\n"
-                            "Id в бд: " + str(book.id) + "\n"
-                            "Автор: " + string_trim(str(book.author)) + "\n"
-                            "Год публикации: " + str(book.year_of_publication) + "\n"
-                            "Ссылка: " + str(book.link) + "\n")
+    books = []
 
-    await bot.send_message(callback_query.from_user.id, "\n".join(books_strings), reply_markup=inline_kb_full)
+    search_result = SearchResult(books, action.payload.prepared_collection_id)
+    pages = PagesResult(search_result)
+
+    page_index = action.payload.page_index
+    
+    keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
+
+    message = MessageController.preapare_page_message(pages.get_page(page_index))
+
+    await bot.send_message(callback_query.message.from_user.id, message, reply_markup=keyboard)
+
+    await callback_query.message.delete()
 
 
 # if __name__ == '__main__':

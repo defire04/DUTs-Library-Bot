@@ -1,5 +1,6 @@
 from typing import List
-from book import Book
+from models.book import Book
+
 
 class SearchResult:
     def __init__(self, books: List[Book], search_query: str):
@@ -14,6 +15,5 @@ class PagesResult:
         self.results_per_page = results_per_page
 
     def get_page(self, index: int):
-        page = self.result.data[index *
-                                self.results_per_page: (index + 1) * self.results_per_page]
+        page = self.result.data[index * self.results_per_page: (index + 1) * self.results_per_page]
         return page

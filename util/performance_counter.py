@@ -11,7 +11,6 @@ class PerformanceCounter:
 
     def end(self):
         self.total += time.time() - self.time_start
-        self.total = 0
 
     def reset(self):
         self.total = 0

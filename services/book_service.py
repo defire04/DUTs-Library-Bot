@@ -1,7 +1,10 @@
 from typing import List
 import psycopg2
+
+from models.query import Query
 from resources.config import host, username, password, datasource
 from models.book import Book
+from services.query_servise import QueryService
 
 
 class BookService:
@@ -10,7 +13,7 @@ class BookService:
 
     @staticmethod
     def insert(book):
-        sql = """INSERT INTO books_final (title, author, lang, document_size, year_of_publication, publishing_house, 
+        sql = """INSERT INTO books (title, author, lang, document_size, year_of_publication, publishing_house, 
         country, number_of_pages, availability_in_the_library, availability_in_electronic_form, added, 
         classification, document_type, link_to_book) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
         record_to_insert = (
@@ -30,9 +33,11 @@ class BookService:
         books: List[Book] = []
 
         for book in BookService.cursor.fetchall():
-            books.append(Book.create_book(book[0], book[1], book[2], book[3], book[4], book[5], book[6],
-                                          book[7], book[8], book[9], book[10], book[11], book[12], book[13], book[14]))
-        print(len(books))
+            books.append(Book.create_book(*book))
+
+        print("Count of books by request: " + str(len(books)))
+        QueryService.create(sql, books)
+
         return books
 
     @staticmethod

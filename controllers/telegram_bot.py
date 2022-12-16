@@ -2,9 +2,9 @@ from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-
-from controllers.parser import Parser
 from models.search_result import PagesResult, SearchResult
+
+
 from resources.config import TOKEN
 from services.book_service import BookService
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions

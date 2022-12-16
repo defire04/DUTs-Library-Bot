@@ -19,11 +19,11 @@ class KeyboardController:
     
     @staticmethod
     def create_perious_button(current_page_index: int, query_id: int):
-        return KeyboardController.create_page_button("Back", current_page_index - 1, query_id)
+        return KeyboardController.create_page_button("◀ Back", current_page_index - 1, query_id)
     
     @staticmethod
     def create_next_button(current_page_index: int, query_id: int):
-        return KeyboardController.create_page_button("Next", current_page_index + 1, query_id)
+        return KeyboardController.create_page_button("Next ▶", current_page_index + 1, query_id)
 
     @staticmethod
     def create_page_button(text: str, page_index: int, query_id: int):

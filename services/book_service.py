@@ -26,7 +26,7 @@ class BookService:
         
     @staticmethod
     def find_by_title_and_create_query(title):
-        books = BookService.find_by_title()
+        books = BookService.find_by_title(title)
         query_id = QueryService.create(title, books)
         return {
             "books": books,

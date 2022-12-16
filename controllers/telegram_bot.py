@@ -31,6 +31,7 @@ def get_search_result_from_search_query(search_string: str):
     if not book_list_and_query["books"]:
         return None
 
+    print(book_list_and_query["query_id"])
     return SearchResult(book_list_and_query["books"], book_list_and_query["query_id"])
 
 
@@ -51,7 +52,7 @@ async def echo_message(msg: types.Message):
         return
     books_strings = []
 
-    action_for_next_button = ButtonPageAction(1, search_result.search_query)
+    action_for_next_button = ButtonPageAction(1, int(search_result.search_query))
     next_button = InlineKeyboardButton('Text', callback_data=action_for_next_button.stringify())
     inline_kb_full = InlineKeyboardMarkup(row_width=1).add(next_button)
 

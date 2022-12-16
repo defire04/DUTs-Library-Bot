@@ -1,7 +1,6 @@
-/config.py
+/resources/config.py
 
 
 __pycache__
-
 .idea
 .vscode

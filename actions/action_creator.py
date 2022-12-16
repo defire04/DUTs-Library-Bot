@@ -2,7 +2,7 @@ from abc import abstractmethod, ABC
 from typing import Generic, TypeVar
 import json
 
-from multimethod import MultipleMeta
+from util.multimethod import MultipleMeta
 
 # class SearchResult:
 #     def __init__(self, books: List[Book], search_query: str):

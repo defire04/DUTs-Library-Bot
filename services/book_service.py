@@ -1,28 +1,10 @@
 from typing import List
 import psycopg2
-from config import host, username, password, datasource
-from models import Book
+from resources.config import host, username, password, datasource
+from models.book import Book
 
 
-class SearchResult:
-    def __init__(self, books: List[Book], search_query: str):
-        self.data = books
-        self.search_query = search_query
-        self.data_length = len(books)
-
-
-class PagesResult:
-    def __init__(self, result: SearchResult, results_per_page: int = 4):
-        self.result = result
-        self.results_per_page = results_per_page
-
-    def get_page(self, index: int):
-        page = self.result.data[index *
-                                self.results_per_page: (index + 1) * self.results_per_page]
-        return page
-
-
-class DatabaseConnect:
+class BookService:
     connection = psycopg2.connect(
         host=host, user=username, password=password, database=datasource)
     cursor = connection.cursor()
@@ -36,8 +18,8 @@ class DatabaseConnect:
             book.title, book.author, book.lang, book.document_size, book.year_of_publication, book.publishing_house,
             book.country, book.number_of_pages, book.availability_in_the_library, book.availability_in_electronic_form,
             book.added, book.classification, book.document_type, book.link_to_book)
-        DatabaseConnect.cursor.execute(sql, record_to_insert)
-        DatabaseConnect.connection.commit()
+        BookService.cursor.execute(sql, record_to_insert)
+        BookService.connection.commit()
 
     @staticmethod
     def find_by_title(title):
@@ -46,10 +28,10 @@ class DatabaseConnect:
             like_title.lower()
 
         print(sql)
-        DatabaseConnect.cursor.execute(sql)
+        BookService.cursor.execute(sql)
         books: List[Book] = []
 
-        for book in DatabaseConnect.cursor.fetchall():
+        for book in BookService.cursor.fetchall():
             books.append(Book(book[0], book[1], book[2], book[3], book[4], book[5], book[6],
                               book[7], book[8], book[9], book[10], book[11], book[12], book[13], book[14]))
 
@@ -62,10 +44,15 @@ class DatabaseConnect:
     def replace_C():
         sql_select = """UPDATE books SET title = REPLACE(title ,'С++', 'C++' ) WHERE title LIKE '%С++%';
                         UPDATE books SET title = REPLACE(title ,'С#', 'C#' ) WHERE title LIKE '%С#%';"""
-        DatabaseConnect.cursor.execute(sql_select)
+        BookService.cursor.execute(sql_select)
+
+    @staticmethod
+    def clean_dataset():
+        sql_drop = "drop table books;"
+        BookService.cursor.execute(sql_drop)
 
     @staticmethod
     def finalize():
-        DatabaseConnect.cursor.close()
-        DatabaseConnect.connection.close()
+        BookService.cursor.close()
+        BookService.connection.close()
         print("Database connection dead!")

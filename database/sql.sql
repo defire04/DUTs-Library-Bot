@@ -27,15 +27,14 @@ VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?), ('2', 'a', 'a',  'a', 0,  'a'
 
 select * from books WHERE title='Язык программирования С++. Лекции и упражнения. 5-е издание';
 
-SELECT * FROM books WHERE title LIKE '%Java%';
-SELECT * FROM books WHERE title LIKE '%Java%';
+
 SELECT * FROM books WHERE title LIKE '%C++%'; -- Engl 11
 SELECT * FROM books WHERE title LIKE '%С++%'; -- RU   10
 
-SELECT * FROM books WHERE title LIKE '%C#%'; -- Engl 11
-SELECT * FROM books WHERE title LIKE '%С#%'; -- RU   10
+SELECT * FROM books WHERE title LIKE '%C#%';
+SELECT * FROM books WHERE title LIKE '%С#%';
 
-select * from books where id=4;
+select * from books;
 
 -- UPDATE Person Set fullName=?, yearOfBirth=? WHERE person_id=?
 SELECT classification, COUNT(*) as count FROM books  GROUP BY classification ;

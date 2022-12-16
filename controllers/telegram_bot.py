@@ -78,7 +78,6 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
         action.payload.page_index) + ' из запроса под id: ' + str(action.payload.prepared_collection_id))
 
 
-# if __name__ == '__main__':
 
 def start():
     executor.start_polling(dp)

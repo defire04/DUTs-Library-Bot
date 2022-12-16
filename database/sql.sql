@@ -74,3 +74,5 @@ CREATE TABLE users(
 SELECT * FROM books WHERE LOWER(title) LIKE '%c++%';
 
 SELECT * FROM books WHERE LOWER(title) LIKE '%c++%';
+
+

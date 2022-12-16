@@ -18,7 +18,7 @@ class QueryService:
         for book in books:
             string_books_id.append(str(book.id))
 
-        QueryService.insert(sql, " ".join(string_books_id))
+        return QueryService.insert(sql, " ".join(string_books_id))
 
     @staticmethod
     def insert(search_string, string_books_id):
@@ -36,8 +36,10 @@ class QueryService:
 
     @staticmethod
     def find_by_id(id):
-        sql = "SELECT * FROM query WHERE id = %s"
-        QueryService.cursor.execute(sql, str(id))
+
+        sql = "SELECT * FROM query WHERE id = " + str(id)
+        print(sql)
+        QueryService.cursor.execute(sql)
         tuple_query = QueryService.cursor.fetchall()
         print(len(tuple_query))
 

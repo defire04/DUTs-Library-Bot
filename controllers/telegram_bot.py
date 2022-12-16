@@ -48,8 +48,8 @@ async def echo_message(msg: types.Message):
 
     search_result = get_search_result_from_search_query(msg.text)
     pages = PagesResult(search_result)
-    
-    if not pages:
+
+    if not search_result:
         await bot.send_message(msg.from_user.id, "Такой книги нет или запрос не верен!")
         return
 

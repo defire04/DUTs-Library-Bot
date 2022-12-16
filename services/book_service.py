@@ -15,15 +15,15 @@ class BookService:
     def insert(book):
         sql = """INSERT INTO books (title, author, lang, document_size, year_of_publication, publishing_house, 
         country, number_of_pages, availability_in_the_library, availability_in_electronic_form, added, 
-        classification, document_type, link_to_book) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
+        classification, document_type, link_to_book, sub_category, global_category) 
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s) """
         record_to_insert = (
             book.title, book.author, book.lang, book.document_size, book.year_of_publication, book.publishing_house,
             book.country, book.number_of_pages, book.availability_in_the_library, book.availability_in_electronic_form,
-            book.added, book.classification, book.document_type, book.link)
+            book.added, book.classification, book.document_type, book.link, book.sub_category, book.global_category)
         BookService.cursor.execute(sql, record_to_insert)
         BookService.connection.commit()
 
-        
     @staticmethod
     def find_by_title_and_create_query(title):
         books = BookService.find_by_title(title)
@@ -52,7 +52,7 @@ class BookService:
     @staticmethod
     def find_book_by_ids(request_books: str):
         request_books = request_books.replace(" ", ", ")
-        sql = """SELECT * FROM books WHERE id in ("""+ request_books +""")"""
+        sql = """SELECT * FROM books WHERE id in (""" + request_books + """)"""
         BookService.cursor.execute(sql)
 
         return BookService.result_to_list(BookService.cursor.fetchall())

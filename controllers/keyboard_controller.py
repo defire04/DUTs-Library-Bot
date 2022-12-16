@@ -13,14 +13,11 @@ class KeyboardController:
             keyboard.insert(KeyboardController.create_previous_button(page_index, query_id))
         if pages.get_total_pages_count() - 1 > page_index:
             keyboard.insert(KeyboardController.create_next_button(page_index, query_id))
-        
+
         return keyboard
-            
-
-
 
     @staticmethod
-    def create_perious_button(current_page_index: int, query_id: int):
+    def create_previous_button(current_page_index: int, query_id: int):
         return KeyboardController.create_page_button("◀ Back", current_page_index - 1, query_id)
 
     @staticmethod

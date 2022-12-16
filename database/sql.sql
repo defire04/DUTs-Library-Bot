@@ -14,7 +14,9 @@ CREATE TABLE books
     added                           VARCHAR(200),
     classification                  VARCHAR(200),
     document_type                   VARCHAR(200),
-    link_to_book                    VARCHAR(200)
+    link_to_book                    VARCHAR(200),
+    sub_category                    VARCHAR(200),
+    global_category                 VARCHAR(200)
 );
 
 

@@ -6,7 +6,6 @@ from controllers.keyboard_controller import KeyboardController
 from controllers.message_controller import MessageController
 from models.search_result import PagesResult, SearchResult
 
-
 from resources.config import TOKEN
 from services.book_service import BookService
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
@@ -63,9 +62,9 @@ async def echo_message(msg: types.Message):
     await msg.delete()
 
 
-@dp.callback_query_handler(lambda callback: callback.data and ButtonAction.from_json(callback.data).id == Actions.SWITCH_PAGE)
+@dp.callback_query_handler(
+    lambda callback: callback.data and ButtonAction.from_json(callback.data).id == Actions.SWITCH_PAGE)
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
-    
     action = ButtonAction[ButtonPageActionPayload].from_json(callback_query.data)
     page_index = action.payload.page_index
     query_id = action.payload.prepared_collection_id
@@ -76,14 +75,11 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     pages = PagesResult(search_result)
     message = callback_query.message
 
-    
     keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
 
     message_text = MessageController.preapare_page_message(pages.get_page(page_index))
     await message.edit_text(message_text)
     await message.edit_reply_markup(keyboard)
-
-
 
 
 def start():

@@ -55,7 +55,6 @@ class Parser:
         print("Start:", datetime.fromtimestamp(program_counter.time_start))
         print("End:", datetime.fromtimestamp(time.time()))
 
-
         return program_counter.printResult()
 
     @staticmethod
@@ -158,6 +157,7 @@ class Parser:
             right = i.select('.lib_details_right')
 
             dict_with_book_characteristics["title"] = soup.select('.content_title')[0].text
+
             for j in range(len(right)):
                 dict_with_book_characteristics[str(
                     left[j].text)] = str(right[j].text)
@@ -166,6 +166,9 @@ class Parser:
                     'href')
             except Exception as _ex:
                 print("[INFO]" + dict_with_book_characteristics["title"] + " book has no references!")
+
+        dict_with_book_characteristics["global_category"] = soup.select(".navigation .container-fluid a")[-3].text
+        dict_with_book_characteristics["sub_category"] = soup.select(".navigation .container-fluid a")[-2].text
 
         return dict_with_book_characteristics
 
@@ -187,5 +190,8 @@ class Parser:
         book.classification = dict_with_book_characteristics['Категорія: ']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
         book.link = dict_with_book_characteristics['link_to_book']
+        book.sub_category = dict_with_book_characteristics['sub_category']
+        book.global_category = dict_with_book_characteristics['global_category']
+
 
         BookService.insert(book)

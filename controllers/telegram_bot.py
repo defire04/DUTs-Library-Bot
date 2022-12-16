@@ -7,7 +7,7 @@ from models.search_result import PagesResult, SearchResult
 
 from resources.config import TOKEN
 from services.book_service import BookService
-from actions.action_creator import ButtonAction, ButtonPageAction, Actions
+from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from services.query_servise import QueryService
 from util.util import string_trim
 
@@ -44,8 +44,8 @@ async def echo_message(msg: types.Message):
         return
 
     search_result = get_search_result_from_search_query(msg.text)
-
     pages = PagesResult(search_result)
+    await msg.delete()
 
     if not pages:
         await bot.send_message(msg.from_user.id, "Такой книги нет или запрос не верен!")
@@ -58,10 +58,10 @@ async def echo_message(msg: types.Message):
 
     for book in pages.get_page(0):
         books_strings.append("Название книги: " + string_trim(str(book.title)) + "\n"
-                             "Id в бд: " + str(book.id) + "\n"
-                             "Автор: " + string_trim(str(book.author)) + "\n"
-                             "Год публикации: " + str(book.year_of_publication) + "\n"
-                             "Ссылка: " + str(book.link) + "\n")
+                            "Id в бд: " + str(book.id) + "\n"
+                            "Автор: " + string_trim(str(book.author)) + "\n"
+                            "Год публикации: " + str(book.year_of_publication) + "\n"
+                            "Ссылка: " + str(book.link) + "\n")
 
     await bot.send_message(msg.from_user.id, "\n".join(books_strings), reply_markup=inline_kb_full)
 
@@ -69,16 +69,32 @@ async def echo_message(msg: types.Message):
 @dp.callback_query_handler(lambda callback: callback.data and ButtonAction.from_json(callback.data)
                            .id == Actions.SWITCH_PAGE)
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
-    action = ButtonAction.from_json(callback_query.data)
+    action = ButtonAction[ButtonPageActionPayload].from_json(callback_query.data)
     print(action.payload.page_index)
     print(action.payload.prepared_collection_id)
-
     print(QueryService.find_by_id(action.payload.prepared_collection_id).string_books_id)
     await bot.answer_callback_query(callback_query.id, text='Я хочу страницу ' + str(
         action.payload.page_index) + ' из запроса под id: ' + str(action.payload.prepared_collection_id))
+    await callback_query.message.delete()
+    books_strings = []
+    action.payload.page_index += 1
+    next_button = InlineKeyboardButton('Next', callback_data=action.stringify())
+    inline_kb_full = InlineKeyboardMarkup(row_width=1).add(next_button)
+    search_result = get_search_result_from_search_query('C++')
+    pages = PagesResult(search_result)
+    for book in pages.get_page(action.payload.page_index):
+        books_strings.append("Название книги: " + string_trim(str(book.title)) + "\n"
+                            "Id в бд: " + str(book.id) + "\n"
+                            "Автор: " + string_trim(str(book.author)) + "\n"
+                            "Год публикации: " + str(book.year_of_publication) + "\n"
+                            "Ссылка: " + str(book.link) + "\n")
+
+    await bot.send_message(callback_query.from_user.id, "\n".join(books_strings), reply_markup=inline_kb_full)
 
 
-if __name__ == '__main__':
+# if __name__ == '__main__':
+
+def start():
     executor.start_polling(dp)
     BookService.finalize()
     QueryService.finalize()

@@ -36,6 +36,7 @@ SELECT * FROM books WHERE title LIKE '%С#%';
 
 select * from books;
 
+
 -- UPDATE Person Set fullName=?, yearOfBirth=? WHERE person_id=?
 SELECT classification, COUNT(*) as count FROM books  GROUP BY classification ;
 

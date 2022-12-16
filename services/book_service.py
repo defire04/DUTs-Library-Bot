@@ -17,27 +17,23 @@ class BookService:
         record_to_insert = (
             book.title, book.author, book.lang, book.document_size, book.year_of_publication, book.publishing_house,
             book.country, book.number_of_pages, book.availability_in_the_library, book.availability_in_electronic_form,
-            book.added, book.classification, book.document_type, book.link_to_book)
+            book.added, book.classification, book.document_type, book.link)
         BookService.cursor.execute(sql, record_to_insert)
         BookService.connection.commit()
 
     @staticmethod
     def find_by_title(title):
         like_title = """ '%""" + title + """%';"""
-        sql = """SELECT * FROM books WHERE LOWER(title) LIKE""" + \
-            like_title.lower()
+        sql = """SELECT * FROM books WHERE LOWER(title) LIKE""" + like_title.lower()
 
         print(sql)
         BookService.cursor.execute(sql)
         books: List[Book] = []
 
         for book in BookService.cursor.fetchall():
-            books.append(Book(book[0], book[1], book[2], book[3], book[4], book[5], book[6],
-                              book[7], book[8], book[9], book[10], book[11], book[12], book[13], book[14]))
-
+            books.append(Book.create_book(book[0], book[1], book[2], book[3], book[4], book[5], book[6],
+                                          book[7], book[8], book[9], book[10], book[11], book[12], book[13], book[14]))
         print(len(books))
-        for i in books:
-            print(i)
         return books
 
     @staticmethod
@@ -45,11 +41,13 @@ class BookService:
         sql_select = """UPDATE books SET title = REPLACE(title ,'С++', 'C++' ) WHERE title LIKE '%С++%';
                         UPDATE books SET title = REPLACE(title ,'С#', 'C#' ) WHERE title LIKE '%С#%';"""
         BookService.cursor.execute(sql_select)
+        BookService.connection.commit()
 
     @staticmethod
     def clean_dataset():
-        sql_drop = "drop table books;"
+        sql_drop = "TRUNCATE TABLE books;"
         BookService.cursor.execute(sql_drop)
+        BookService.connection.commit()
 
     @staticmethod
     def finalize():

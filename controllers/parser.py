@@ -42,18 +42,22 @@ class Parser:
         performance_counter.printResult()
 
         performance_counter.start()
-
-        print('Total: ' + str(len(p.map(Parser.get_book_characteristics_and_insert_to_db,
-                                        list_of_links_to_books_by_section))))
-
+        count_of_books = len(p.map(Parser.get_book_characteristics_and_insert_to_db,
+                                   list_of_links_to_books_by_section))
+        print('Count of books : ' + str(count_of_books))
         performance_counter.end()
         performance_counter.printResult()
 
-        date_start = datetime.fromtimestamp(time_start)
-        print("------------------------------Start:", date_start)
         time_end = time.time()
+
+        date_start = datetime.fromtimestamp(time_start)
+        print("Start:", date_start)
+
         date_end = datetime.fromtimestamp(time_end)
-        print("------------------------------End:", date_end)
+        print("End:", date_end)
+
+        work_time = ("{:.3}".format(((time_end - time_start) % 3600) / 60) + ' min')
+        print(work_time)
 
     @staticmethod
     def get_book_characteristics_and_insert_to_db(link_on_book):

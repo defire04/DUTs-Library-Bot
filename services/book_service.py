@@ -51,9 +51,9 @@ class BookService:
 
     @staticmethod
     def find_book_by_ids(request_books: str):
-        request_books.replace(" ", ", ")
-        sql = """SELECT * FROM books WHERE id in (%s)"""
-        BookService.cursor.execute(sql, request_books)
+        request_books = request_books.replace(" ", ", ")
+        sql = """SELECT * FROM books WHERE id in ("""+ request_books +""")"""
+        BookService.cursor.execute(sql)
 
         return BookService.result_to_list(BookService.cursor.fetchall())
 

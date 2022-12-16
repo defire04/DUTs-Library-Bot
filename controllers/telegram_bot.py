@@ -12,6 +12,7 @@ from services.book_service import BookService
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from services.query_servise import QueryService
 from util.util import string_trim
+from controllers.library_controller import LibraryController
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
@@ -66,20 +67,22 @@ async def echo_message(msg: types.Message):
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     
     action = ButtonAction[ButtonPageActionPayload].from_json(callback_query.data)
-    books = []
-
-    search_result = SearchResult(books, action.payload.prepared_collection_id)
-    pages = PagesResult(search_result)
-
     page_index = action.payload.page_index
+    query_id = action.payload.prepared_collection_id
+
+    books = LibraryController.find_books_by_query_id(query_id)
+
+    search_result = SearchResult(books, query_id)
+    pages = PagesResult(search_result)
+    message = callback_query.message
+
     
     keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
 
-    message = MessageController.preapare_page_message(pages.get_page(page_index))
+    message_text = MessageController.preapare_page_message(pages.get_page(page_index))
+    await message.edit_text(message_text)
+    await message.edit_reply_markup(keyboard)
 
-    await bot.send_message(callback_query.message.from_user.id, message, reply_markup=keyboard)
-
-    await callback_query.message.delete()
 
 
 

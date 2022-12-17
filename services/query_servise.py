@@ -7,7 +7,6 @@ from models.query import Query
 from resources.config import host, username, password, datasource
 
 
-
 class QueryService:
     connection = psycopg2.connect(host=host, user=username, password=password, database=datasource)
     cursor = connection.cursor()

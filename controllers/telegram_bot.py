@@ -10,7 +10,6 @@ from resources.config import TOKEN
 from services.book_service import BookService
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from services.query_servise import QueryService
-from util.util import string_trim
 from controllers.library_controller import LibraryController
 
 bot = Bot(token=TOKEN)
@@ -38,9 +37,10 @@ def get_search_result_from_search_query(search_string: str):
 
 
 @dp.message_handler()
-async def echo_message(msg: types.Message):
-    # print(msg.from_user.id)
-    # print(msg.from_user.username)
+async def handel_find_book(msg: types.Message):
+    print("User: " + str(msg.from_user.username))
+    print("User id: " + str(msg.from_user.id))
+
     if len(msg.text) < 2:
         await bot.send_message(msg.from_user.id, "Запрос должен содержать минимум 2 символа!")
         return

@@ -7,9 +7,10 @@ class KeyboardController:
     def create_pages_keyboard(pages: PagesResult, page_index: int):
         query_id = pages.result.search_query_id
     
-        keyboard = InlineKeyboardMarkup(row_width=2)
+        keyboard = InlineKeyboardMarkup(row_width=4)
         if (page_index > 0):
             keyboard.insert(KeyboardController.create_perious_button(page_index, query_id))
+        
         if (pages.get_total_pages_count() - 1 > page_index):
             keyboard.insert(KeyboardController.create_next_button(page_index, query_id))
         

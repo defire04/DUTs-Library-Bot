@@ -70,7 +70,33 @@ class CategoryService:
         return CategoryService.cursor.fetchall()
 
     @staticmethod
+    def find_id_by_category_for_book(category: str):
+
+        sql = """SELECT id FROM book_category WHERE category_title = %s"""
+
+        CategoryService.cursor.execute(sql, (category,))
+        book_category_id = CategoryService.cursor.fetchall()
+
+        if not book_category_id:
+            return None
+        return int(book_category_id[0][0])
+
+    @staticmethod
+    def insert_book_category(category):
+        sql = "INSERT INTO book_category (category_title) VALUES (%s) RETURNING id;"""
+        CategoryService.cursor.execute(sql, (category,))
+
+        book_category_id = CategoryService.cursor.fetchall()
+        CategoryService.connection.commit()
+
+        return book_category_id[0][0]
+
+    @staticmethod
     def finalize():
         CategoryService.cursor.close()
         CategoryService.connection.close()
         print("Database connection dead! ------------------ Category")
+
+
+
+

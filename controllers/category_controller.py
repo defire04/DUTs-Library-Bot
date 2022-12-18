@@ -25,6 +25,14 @@ class CategoryController:
         return sub_category_id
 
     @staticmethod
+    def insert_book_category_and_return(category):
+        book_category_id = CategoryService.find_id_by_category_for_book(category)
+        if book_category_id is None:
+            book_category_id = CategoryService.insert_book_category(category)
+
+        return book_category_id
+
+    @staticmethod
     def get_global_categories():
         categories: List[Category] = []
 

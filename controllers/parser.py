@@ -169,8 +169,9 @@ class Parser:
             except Exception as _ex:
                 print("[INFO]" + dict_with_book_characteristics["title"] + " book has no references!")
 
-        dict_with_book_characteristics["global_category"] = soup.select(".navigation .container-fluid a")[-3].text
+        dict_with_book_characteristics["book_category"] = soup.select(".navigation .container-fluid a")[-1].text
         dict_with_book_characteristics["sub_category"] = soup.select(".navigation .container-fluid a")[-2].text
+        dict_with_book_characteristics["global_category"] = soup.select(".navigation .container-fluid a")[-3].text
 
         return dict_with_book_characteristics
 
@@ -178,11 +179,13 @@ class Parser:
     def insert_book_to_db(dict_with_book_characteristics):
 
         global_category_id = CategoryController.insert_global_category_and_return(dict_with_book_characteristics["global_category"])
-
         dict_with_book_characteristics["global_category"] = global_category_id
+
         dict_with_book_characteristics["sub_category"] = CategoryController.insert_sub_category_and_return(
             dict_with_book_characteristics["sub_category"], global_category_id)
 
+        dict_with_book_characteristics["book_category"] = CategoryController.insert_book_category_and_return(
+            dict_with_book_characteristics["book_category"])
 
         book = Book(dict_with_book_characteristics['title'])
         book.author = dict_with_book_characteristics['Автор: ']
@@ -197,7 +200,7 @@ class Parser:
         book.availability_in_electronic_form = dict_with_book_characteristics[
             'Наявність в електронному вигляді: ']
         book.added = dict_with_book_characteristics['Створено: ']
-        book.classification = dict_with_book_characteristics['Категорія: ']
+        book.classification_id = dict_with_book_characteristics['book_category']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
         book.link = dict_with_book_characteristics['link_to_book']
         book.sub_category = dict_with_book_characteristics['sub_category']

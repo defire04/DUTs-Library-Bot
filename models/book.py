@@ -6,8 +6,8 @@ class Book:
 
     @classmethod
     def create_book(cls, id, title, author, lang, document_size, year_of_publication, publishing_house, country,
-                    number_of_pages, availability_in_the_library,
-                    availability_in_electronic_form, added, classification, document_type, link):
+                    number_of_pages, availability_in_the_library,availability_in_electronic_form, added, classification,
+                    document_type, link, sub_category, global_category):
         peremennay = cls(title)
         peremennay.id = id
         peremennay.title = title
@@ -24,7 +24,8 @@ class Book:
         peremennay.classification = classification
         peremennay.document_type = document_type
         peremennay.link = link
-
+        peremennay.sub_category = sub_category
+        peremennay.global_category = global_category
         return peremennay
 
     # def __init__(self, id, title, author, lang, document_size, year_of_publication, publishing_house, country,

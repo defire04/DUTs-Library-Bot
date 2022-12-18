@@ -9,9 +9,9 @@ class MessageController:
     def preapare_page_message(page: List[Book]):
         books_strings = []
         for book in page:
-            books_strings.append("Название книги: " + string_trim(str(book.title)) + "\n"
+            books_strings.append("<strong>" + string_trim(str(book.title)) + "</strong>\n"
                             "Id в бд: " + str(book.id) + "\n"
                             "Автор: " + string_trim(str(book.author)) + "\n"
                             "Год публикации: " + str(book.year_of_publication) + "\n"
-                            "Ссылка: " + str(book.link) + "\n")
+                            "<a href='" + str(book.link) + "'>Ссылка на книгу</a>\n")
         return "\n".join(books_strings)

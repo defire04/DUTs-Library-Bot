@@ -1,6 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
+from controllers.category_controller import CategoryController
 from services.book_service import BookService
 from models.book import Book
 import time
@@ -17,6 +18,7 @@ program_counter = PerformanceCounter()
 class Parser:
     BASE = "https://www.dut.edu.ua"
     URL = "https://www.dut.edu.ua/ua/lib/1/category/2122"
+    book_set = {}
 
     @staticmethod
     def start():
@@ -174,6 +176,14 @@ class Parser:
 
     @staticmethod
     def insert_book_to_db(dict_with_book_characteristics):
+
+        global_category_id = CategoryController.insert_global_category_and_return(dict_with_book_characteristics["global_category"])
+
+        dict_with_book_characteristics["global_category"] = global_category_id
+        dict_with_book_characteristics["sub_category"] = CategoryController.insert_sub_category_and_return(
+            dict_with_book_characteristics["sub_category"], global_category_id)
+
+
         book = Book(dict_with_book_characteristics['title'])
         book.author = dict_with_book_characteristics['Автор: ']
         book.lang = dict_with_book_characteristics['Мова документу: ']
@@ -192,6 +202,5 @@ class Parser:
         book.link = dict_with_book_characteristics['link_to_book']
         book.sub_category = dict_with_book_characteristics['sub_category']
         book.global_category = dict_with_book_characteristics['global_category']
-
 
         BookService.insert(book)

@@ -1,3 +1,6 @@
+from typing import List
+
+from models.category import Category
 from services.category_service import CategoryService
 
 
@@ -12,7 +15,6 @@ class CategoryController:
 
         return global_category_id
 
-
     @staticmethod
     def insert_sub_category_and_return(sub_category, global_id):
         sub_category_id = CategoryService.find_id_by_category_for_sub(sub_category)
@@ -22,6 +24,14 @@ class CategoryController:
 
         return sub_category_id
 
+    @staticmethod
+    def get_global_categories():
+        categories: List[Category] = []
+
+        for category in CategoryService.get_global_categories():
+            categories.append(Category(*category))
+
+        return categories
 
     @staticmethod
     def finalize():

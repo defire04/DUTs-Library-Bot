@@ -12,7 +12,7 @@ CREATE TABLE books
     availability_in_the_library     VARCHAR(50),
     availability_in_electronic_form VARCHAR(50),
     added                           VARCHAR(200),
-    classification                  VARCHAR(200),
+    classification_id               INT,
     document_type                   VARCHAR(200),
     link_to_book                    VARCHAR(200),
     sub_category                    INT,
@@ -42,7 +42,7 @@ select * from books_final;
 
 
 -- UPDATE Person Set fullName=?, yearOfBirth=? WHERE person_id=?
-SELECT classification, COUNT(*) as count FROM books  GROUP BY classification ;
+-- SELECT classification, COUNT(*) as count FROM books  GROUP BY classification ;
 
 
 UPDATE books SET title = REPLACE(title ,'С++', 'C++' ) WHERE title LIKE '%С++%';
@@ -101,3 +101,5 @@ INSERT INTO sub_category (sub_title, global_id) values('андрей_sub2', 1);
 
 
 SELECT * from sub_category WHERE global_id = 2
+
+SELECT * from global_category

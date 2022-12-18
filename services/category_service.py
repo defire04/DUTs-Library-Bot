@@ -1,5 +1,8 @@
+from typing import List
+
 import psycopg2
 
+from models.category import Category
 from resources.config import host, username, password, datasource
 
 
@@ -57,6 +60,14 @@ class CategoryService:
         if not sub_category_id:
             return None
         return int(sub_category_id[0][0])
+
+    @staticmethod
+    def get_global_categories():
+        sql = """SELECT * from global_category """
+        print(sql)
+        CategoryService.cursor.execute(sql)
+
+        return CategoryService.cursor.fetchall()
 
     @staticmethod
     def finalize():

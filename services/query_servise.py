@@ -12,23 +12,11 @@ class QueryService:
     cursor = connection.cursor()
 
     @staticmethod
-    def create(sql: str, books: List[Book]):
-        string_books_id = []
-
-        for book in books:
-            string_books_id.append(str(book.id))
-
-        return QueryService.insert(sql, " ".join(string_books_id))
-
-    @staticmethod
     def insert(search_string, string_books_id):
-        sql = """INSERT INTO query(search_string, string_books_id) VALUES (%s, %s);"""
+        sql = """INSERT INTO query(search_string, string_books_id) VALUES (%s, %s) RETURNING id;"""
         print(sql)
-        record_to_insert = (search_string, string_books_id)
-        QueryService.cursor.execute(sql, record_to_insert)
+        QueryService.cursor.execute(sql, (search_string, string_books_id))
 
-        sql = """SELECT currval(pg_get_serial_sequence('query','id'));"""
-        QueryService.cursor.execute(sql)
         QueryService.connection.commit()
         tuple_insert_id = QueryService.cursor.fetchall()
 
@@ -36,14 +24,26 @@ class QueryService:
 
     @staticmethod
     def find_by_id(id):
-        sql = "SELECT * FROM query WHERE id = " + str(id)
+        sql = "SELECT * FROM query WHERE id = %s "
         print(sql)
-        QueryService.cursor.execute(sql)
+        QueryService.cursor.execute(sql, (id, ))
         tuple_query = QueryService.cursor.fetchall()
         query = Query(*tuple_query[0])
 
         return query
 
+    @staticmethod
+    def find_by_search_string(search_string):
+        sql = "SELECT id FROM query WHERE search_string = %s "
+        print(sql)
+        QueryService.cursor.execute(sql, (search_string, ))
+
+        query_id = QueryService.cursor.fetchall()
+        if not query_id:
+            return None
+
+        print(query_id)
+        return int(query_id[0][0])
 
     @staticmethod
     def finalize():

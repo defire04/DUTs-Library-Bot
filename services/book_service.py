@@ -1,10 +1,8 @@
-from typing import List
+
 import psycopg2
 
-from models.query import Query
 from resources.config import host, username, password, datasource
-from models.book import Book
-from services.query_servise import QueryService
+
 
 
 class BookService:

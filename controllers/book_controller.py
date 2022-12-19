@@ -1,8 +1,8 @@
 from typing import List
 
+from controllers.query_controller import QueryController
 from models.book import Book
 from services.book_service import BookService
-from services.query_servise import QueryService
 
 
 class BookController:
@@ -14,6 +14,7 @@ class BookController:
     @staticmethod
     def find_by_title(title):
         return BookController.result_to_list(BookService.find_by_title(title))
+
     @staticmethod
     def find_books_by_book_category(category_id):
         return BookController.result_to_list(BookService.find_books_by_book_category(category_id))
@@ -21,7 +22,7 @@ class BookController:
     @staticmethod
     def find_by_title_and_create_query(title):
         books = BookController.find_by_title(title)
-        query_id = QueryService.create(title, books)
+        query_id = QueryController.create(title, books)
         return {
             "books": books,
             "query_id": query_id
@@ -41,6 +42,7 @@ class BookController:
     @staticmethod
     def finalize():
         BookService.finalize()
+
     @staticmethod
     def result_to_list(find_result):
         books: List[Book] = []

@@ -6,12 +6,12 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from controllers.book_controller import BookController
 from controllers.keyboard_controller import KeyboardController
 from controllers.message_controller import MessageController
+from controllers.query_controller import QueryController
 from models.search_result import PagesResult, SearchResult
 
 from resources.config import TOKEN
 
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
-from services.query_servise import QueryService
 from controllers.library_controller import LibraryController
 
 bot = Bot(token=TOKEN)
@@ -29,6 +29,7 @@ async def process_start_command(message: types.Message):
 
 
 def get_search_result_from_search_query(search_string: str):
+
     book_list_and_query = BookController.find_by_title_and_create_query(search_string)
 
     if not book_list_and_query["books"]:
@@ -86,4 +87,4 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
 def start():
     executor.start_polling(dp)
     BookController.finalize()
-    QueryService.finalize()
+    QueryController.finalize()

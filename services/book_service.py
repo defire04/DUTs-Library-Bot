@@ -24,14 +24,6 @@ class BookService:
         BookService.cursor.execute(sql, record_to_insert)
         BookService.connection.commit()
 
-    @staticmethod
-    def find_by_title_and_create_query(title):
-        books = BookService.find_by_title(title)
-        query_id = QueryService.create(title, books)
-        return {
-            "books": books,
-            "query_id": query_id
-        }
 
     @staticmethod
     def find_by_title(title):
@@ -40,14 +32,7 @@ class BookService:
 
         print(sql)
         BookService.cursor.execute(sql)
-        books: List[Book] = []
-
-        for book in BookService.cursor.fetchall():
-            books.append(Book.create_book(*book))
-
-        print("Count of books by request: " + str(len(books)))
-
-        return books
+        return BookService.cursor.fetchall()
 
     @staticmethod
     def find_book_by_ids(request_books: str):
@@ -55,16 +40,16 @@ class BookService:
         sql = """SELECT * FROM books WHERE id in (""" + request_books + """)"""
         BookService.cursor.execute(sql)
 
-        return BookService.result_to_list(BookService.cursor.fetchall())
+        return BookService.cursor.fetchall()
 
     @staticmethod
-    def result_to_list(find_result):
-        books: List[Book] = []
+    def find_books_by_book_category(category_id):
+        sql = """SELECT * FROM books WHERE classification_id = %s"""
+        BookService.cursor.execute(sql, (category_id,))
 
-        for book in find_result:
-            books.append(Book.create_book(*book))
+        return BookService.cursor.fetchall()
 
-        return books
+
 
     @staticmethod
     def replace_c():

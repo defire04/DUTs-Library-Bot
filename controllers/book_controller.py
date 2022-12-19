@@ -21,12 +21,15 @@ class BookController:
 
     @staticmethod
     def find_by_title_and_create_query(title):
+
         books = BookController.find_by_title(title)
         query_id = QueryController.create(title, books)
+
         return {
             "books": books,
             "query_id": query_id
         }
+
     @staticmethod
     def find_book_by_ids(request_books):
         return BookController.result_to_list(BookService.find_book_by_ids(request_books))

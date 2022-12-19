@@ -32,7 +32,6 @@ def get_search_result_from_search_query(search_string: str):
     if not book_list_and_query["books"]:
         return None
 
-    print(book_list_and_query["query_id"])
     return SearchResult(book_list_and_query["books"], book_list_and_query["query_id"])
 
 

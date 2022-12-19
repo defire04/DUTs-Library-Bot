@@ -181,11 +181,12 @@ class Parser:
         global_category_id = CategoryController.insert_global_category_and_return(dict_with_book_characteristics["global_category"])
         dict_with_book_characteristics["global_category"] = global_category_id
 
-        dict_with_book_characteristics["sub_category"] = CategoryController.insert_sub_category_and_return(
+        sub_category_id = CategoryController.insert_sub_category_and_return(
             dict_with_book_characteristics["sub_category"], global_category_id)
+        dict_with_book_characteristics["sub_category"] = sub_category_id
 
         dict_with_book_characteristics["book_category"] = CategoryController.insert_book_category_and_return(
-            dict_with_book_characteristics["book_category"])
+            dict_with_book_characteristics["book_category"], sub_category_id)
 
         book = Book(dict_with_book_characteristics['title'])
         book.author = dict_with_book_characteristics['Автор: ']

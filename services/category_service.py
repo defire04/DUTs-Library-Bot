@@ -36,6 +36,14 @@ class CategoryService:
         return int(global_category_id[0][0])
 
     @staticmethod
+    def get_global_categories():
+        sql = """SELECT * from global_category """
+        print(sql)
+        CategoryService.cursor.execute(sql)
+
+        return CategoryService.cursor.fetchall()
+
+    @staticmethod
     def insert_sub(category, global_id):
         sql = "INSERT INTO sub_category (sub_title, global_id) VALUES (%s, %s);"
 
@@ -62,16 +70,15 @@ class CategoryService:
         return int(sub_category_id[0][0])
 
     @staticmethod
-    def get_global_categories():
-        sql = """SELECT * from global_category """
+    def find_book_categories_by_sub_id(global_id):
+        sql = """SELECT * from sub_category WHERE global_id = %s"""
         print(sql)
-        CategoryService.cursor.execute(sql)
+        CategoryService.cursor.execute(sql,(global_id,))
 
         return CategoryService.cursor.fetchall()
 
     @staticmethod
-    def find_id_by_category_for_book(category: str):
-
+    def find_id_by_category_for_book(category):
         sql = """SELECT id FROM book_category WHERE category_title = %s"""
 
         CategoryService.cursor.execute(sql, (category,))
@@ -82,14 +89,25 @@ class CategoryService:
         return int(book_category_id[0][0])
 
     @staticmethod
-    def insert_book_category(category):
-        sql = "INSERT INTO book_category (category_title) VALUES (%s) RETURNING id;"""
-        CategoryService.cursor.execute(sql, (category,))
+    def insert_book_category(category, sub_id):
+        sql = "INSERT INTO book_category (category_title, sub_id) VALUES (%s, %s) RETURNING id;"""
+        CategoryService.cursor.execute(sql, (category,sub_id))
 
         book_category_id = CategoryService.cursor.fetchall()
         CategoryService.connection.commit()
 
         return book_category_id[0][0]
+
+    @staticmethod
+    def find_book_categories_by_sub_id(sub_id):
+        sql = """SELECT * from book_category WHERE sub_id = %s"""
+        print(sql)
+        CategoryService.cursor.execute(sql,(sub_id,))
+
+        return CategoryService.cursor.fetchall()
+
+
+
 
     @staticmethod
     def finalize():

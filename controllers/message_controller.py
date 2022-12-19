@@ -1,6 +1,5 @@
 from typing import List
 from models.book import Book
-from models.search_result import PagesResult
 from util.util import string_trim
 
 

@@ -1,7 +1,7 @@
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ContentType
 
 from controllers.book_controller import BookController
 from controllers.keyboard_controller import KeyboardController
@@ -83,6 +83,13 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     await message.edit_text(message_text, parse_mode="html")
     await message.edit_reply_markup(keyboard)
 
+
+@dp.message_handler(content_types=ContentType.ANY)
+async def unknown_type_of_message(msg: types.Message):
+    print("User: " + str(msg.from_user.username))
+    print("User id: " + str(msg.from_user.id))
+    await bot.send_sticker(chat_id=msg.from_user.id,
+                           sticker=r"CAACAgIAAxkBAAEG6K9jocRBRnn3HykoJBwDzHVxv3FN5wACEgADbrttNcV0uCSF9fevLAQ")
 
 def start():
     executor.start_polling(dp)

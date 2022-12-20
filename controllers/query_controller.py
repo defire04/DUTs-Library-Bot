@@ -7,13 +7,8 @@ from services.query_servise import QueryService
 class QueryController:
 
     @staticmethod
-    def check_is_query_in_table(search_query):
-        return QueryService.find_by_search_string(search_query)
-
-
-    @staticmethod
     def create(sql: str, books: List[Book]):
-        query_id = QueryService.find_by_search_string(sql).id
+        query_id = QueryService.find_by_search_string(sql)
         if query_id is None:
             query_id = QueryController.insert(sql, books)
 

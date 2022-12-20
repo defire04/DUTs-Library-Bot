@@ -34,15 +34,15 @@ class QueryService:
 
     @staticmethod
     def find_by_search_string(search_string):
-        sql = "SELECT * FROM query WHERE search_string = %s "
+        sql = "SELECT id FROM query WHERE search_string = %s "
         print(sql)
         QueryService.cursor.execute(sql, (search_string, ))
 
-        query = QueryService.cursor.fetchall()
-        if not query:
+        query_id = QueryService.cursor.fetchall()
+        if not query_id:
             return None
 
-        return Query(*query[0])
+        return query_id[0][0]
 
     @staticmethod
     def finalize():

@@ -17,7 +17,7 @@ from controllers.user_controller import UserController
 from models.search_result import PagesResult, SearchResult
 from models.user import User
 
-from resources.config import TOKEN, admin1_id
+from resources.config import TOKEN, admins
 
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from controllers.library_controller import LibraryController
@@ -25,7 +25,7 @@ from controllers.library_controller import LibraryController
 storage = MemoryStorage()
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
-ADMINS = [admin1_id]
+ADMINS = admins
 
 action = ButtonPageAction(1, 2)
 button = InlineKeyboardButton('Text', callback_data=action.stringify())

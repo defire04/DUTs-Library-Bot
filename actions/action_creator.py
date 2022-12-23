@@ -71,6 +71,4 @@ class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
         super().__init__(Actions.SWITCH_PAGE, payload)
 
 
-action = ButtonAction.from_json(
-    '{"a": 0, "pl": {"pg": 1, "d": 12}}')
-print(len(action.stringify()))
+

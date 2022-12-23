@@ -69,7 +69,7 @@ select * from query;
 
 drop TABLE global_category;
 drop table sub_category;
-
+drop table book_category;
 
 select * from global_category;
 CREATE TABLE global_category(
@@ -93,9 +93,9 @@ CREATE TABLE book_category(
 
 );
 select * from book_category;
-drop table book_category;
 
 
+SELECT * from book_category WHERE sub_id = 1;
 
 INSERT INTO global_category (category_title) values('андрей');
 INSERT INTO sub_category (sub_title, global_id) values('андрей_sub', 1);

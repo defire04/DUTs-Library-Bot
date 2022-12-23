@@ -13,6 +13,7 @@ class CategoryController:
         if global_category_id is None:
             global_category_id = CategoryService.insert_global(category)
 
+        print(global_category_id)
         return global_category_id
 
     @staticmethod
@@ -37,7 +38,7 @@ class CategoryController:
     def find_sub_categories_by_global_id(global_id):
         categories: List[Category] = []
 
-        for category in CategoryService.find_book_categories_by_sub_id(global_id):
+        for category in CategoryService.find_book_categories_by_global_id(global_id):
             categories.append(Category(category[0], category[1]))
 
         return categories

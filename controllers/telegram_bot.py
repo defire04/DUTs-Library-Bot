@@ -51,7 +51,7 @@ class Dialog(StatesGroup):
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(msg: types.Message):
-    add_new_user(msg.from_user.id, msg.from_user.username)
+    add_new_user(msg)
     for admin_id in ADMINS:
         if msg.from_user.id == admin_id:
             await msg.answer('Добро пожаловать в Админ-Панель! Выберите действие на клавиатуре',
@@ -151,6 +151,7 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
 
         await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
         await msg.delete()
+        # TODO тут проблема 
         await state.finish()
 
 
@@ -189,9 +190,10 @@ async def unknown_type_of_message(msg: types.Message):
                            sticker=r"CAACAgIAAxkBAAEG6K9jocRBRnn3HykoJBwDzHVxv3FN5wACEgADbrttNcV0uCSF9fevLAQ")
 
 
-def add_new_user(user_id, username):
-    if not UserController.check_is_user_in_db(user_id):
-        user = User(user_id, username)
+def add_new_user(user_message: types.Message):
+    print(user_message.from_user.full_name)
+    if not UserController.check_is_user_in_db(user_message.from_user.id):
+        user = User(user_message.from_user.id, user_message.from_user.username)
         UserController.insert(user)
 
 

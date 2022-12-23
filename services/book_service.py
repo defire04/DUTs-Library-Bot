@@ -22,7 +22,6 @@ class BookService:
         BookService.cursor.execute(sql, record_to_insert)
         BookService.connection.commit()
 
-
     @staticmethod
     def find_by_title(title):
         like_title = """ '%""" + title + """%';"""
@@ -46,7 +45,6 @@ class BookService:
         BookService.cursor.execute(sql, (category_id,))
 
         return BookService.cursor.fetchall()
-
 
 
     @staticmethod

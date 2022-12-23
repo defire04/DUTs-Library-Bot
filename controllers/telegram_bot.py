@@ -7,7 +7,9 @@ from controllers.book_controller import BookController
 from controllers.keyboard_controller import KeyboardController
 from controllers.message_controller import MessageController
 from controllers.query_controller import QueryController
+from controllers.user_controller import UserController
 from models.search_result import PagesResult, SearchResult
+from models.user import User
 
 from resources.config import TOKEN
 
@@ -28,7 +30,6 @@ async def process_start_command(message: types.Message):
 
 
 def get_search_result_from_search_query(search_string: str):
-
     book_list_and_query = BookController.find_by_title_and_create_query(search_string)
 
     if not book_list_and_query["books"]:
@@ -39,8 +40,7 @@ def get_search_result_from_search_query(search_string: str):
 
 @dp.message_handler()
 async def handel_find_book(msg: types.Message):
-    print("User: " + str(msg.from_user.username))
-    print("User id: " + str(msg.from_user.id))
+    add_new_user(msg.from_user.id, msg.from_user.username)
 
     if len(msg.text) < 2:
         await bot.send_message(msg.from_user.id, "Запрос должен содержать минимум 2 символа!")
@@ -85,10 +85,17 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
 
 @dp.message_handler(content_types=ContentType.ANY)
 async def unknown_type_of_message(msg: types.Message):
-    print("User: " + str(msg.from_user.username))
-    print("User id: " + str(msg.from_user.id))
+    add_new_user(msg.from_user.id, msg.from_user.username)
+
     await bot.send_sticker(chat_id=msg.from_user.id,
                            sticker=r"CAACAgIAAxkBAAEG6K9jocRBRnn3HykoJBwDzHVxv3FN5wACEgADbrttNcV0uCSF9fevLAQ")
+
+
+def add_new_user(user_id, username):
+    if not UserController.check_is_user_in_db(user_id):
+        user = User(user_id, username)
+        UserController.insert(user)
+
 
 def start():
     executor.start_polling(dp)

@@ -13,7 +13,7 @@ class BookController:
 
     @staticmethod
     def find_by_title(title):
-        return BookController.result_to_list(BookService.find_by_title(title))
+        return  BookController.books_without_duplicates(BookController.result_to_list(BookService.find_by_title(title)))
 
     @staticmethod
     def find_books_by_book_category(category_id):
@@ -29,6 +29,14 @@ class BookController:
             "books": books,
             "query_id": query_id
         }
+
+    @staticmethod
+    def books_without_duplicates(books):
+        books_without_duplicates: List[Book] = []
+        for book in books:
+            if book not in books_without_duplicates:
+                books_without_duplicates.append(book)
+        return books_without_duplicates
 
     @staticmethod
     def find_book_by_ids(request_books):

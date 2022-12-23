@@ -116,3 +116,6 @@ SELECT * from sub_category WHERE global_id = 2;
 SELECT * from global_category;
 
 SELECT id FROM book_category WHERE category_title = ?
+
+SELECT title from books GROUP BY title;
+SELECT * from books WHERE title='Захист інформації на об’єктах інформаційної діяльності. Створення комплексу технічного захисту інформації. Порядок розроблення та впровадження заходів із захисту інформації';

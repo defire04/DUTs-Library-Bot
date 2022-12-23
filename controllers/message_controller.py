@@ -25,6 +25,6 @@ class MessageController:
             users_strings.append(
                             "-" * 60 + "\n" 
                             "User id:" + str(user.user_id) + '\n'
-                            "Username: " + user.username)
+                            "Username: " + str(user.username))
 
         return "\n".join(users_strings)

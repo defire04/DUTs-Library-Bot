@@ -1,3 +1,5 @@
+from typing import List
+
 from aiogram import Bot, types
 from aiogram.dispatcher import Dispatcher
 from aiogram.utils import executor
@@ -12,13 +14,14 @@ from controllers.user_controller import UserController
 from models.search_result import PagesResult, SearchResult
 from models.user import User
 
-from resources.config import TOKEN
+from resources.config import TOKEN, admin1_id
 
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from controllers.library_controller import LibraryController
 
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot)
+ADMINS = [admin1_id]
 
 action = ButtonPageAction(1, 2)
 button = InlineKeyboardButton('Text', callback_data=action.stringify())
@@ -28,6 +31,19 @@ inline_kb_full = InlineKeyboardMarkup(row_width=2).add(button)
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
     await message.reply("Привет!\nНапиши мне название книги!\nЗапрос должен содержать минимум 3 символа!")
+
+
+@dp.message_handler(commands=['users'])
+async def get_users_for_admin(message: types.Message):
+    users: List[User] = []
+    for admin_id in ADMINS:
+        if message.from_user.id == admin_id:
+            users = UserController.get_users()
+            break
+
+    message_text = MessageController.prepare_page_message_for_users(users)
+    await bot.send_message(message.from_user.id, message_text)
+    await message.delete()
 
 
 def get_search_result_from_search_query(search_string: str):

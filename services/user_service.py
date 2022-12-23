@@ -21,5 +21,12 @@ class UserService:
         return True
 
     @staticmethod
+    def get_users():
+        sql = """SELECT * FROM users """
+        UserService.user_connection.cursor.execute(sql)
+        return UserService.user_connection.cursor.fetchall()
+
+    @staticmethod
     def finalize():
         UserService.user_connection.finalize()
+

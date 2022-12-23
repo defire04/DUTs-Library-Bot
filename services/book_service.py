@@ -25,7 +25,8 @@ class BookService:
 
         print(sql)
         BookService.book_connection.cursor.execute(sql)
-        return BookService.book_connection.cursor.fetchall()
+        tuple_book = BookService.book_connection.cursor.fetchall()
+        return tuple_book
 
     @staticmethod
     def find_book_by_ids(request_books: str):
@@ -33,14 +34,16 @@ class BookService:
         sql = """SELECT * FROM books WHERE id in (""" + request_books + """)"""
         BookService.book_connection.cursor.execute(sql)
 
-        return BookService.book_connection.cursor.fetchall()
+        tuple_book = BookService.book_connection.cursor.fetchall()
+        return tuple_book
 
     @staticmethod
     def find_books_by_book_category(category_id):
         sql = """SELECT * FROM books WHERE classification_id = %s"""
         BookService.book_connection.cursor.execute(sql, (category_id,))
 
-        return BookService.book_connection.cursor.fetchall()
+        tuple_book = BookService.book_connection.cursor.fetchall()
+        return tuple_book
 
     @staticmethod
     def replace_c():

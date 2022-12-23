@@ -6,11 +6,8 @@ class CategoryService:
 
     @staticmethod
     def insert_global(category):
-        sql = "INSERT INTO global_category (category_title) values ('" + category + "');"
-        CategoryService.category_connection.cursor.execute(sql)
-
-        sql = """SELECT currval(pg_get_serial_sequence('global_category','id'));"""
-        CategoryService.category_connection.cursor.execute(sql)
+        sql = "INSERT INTO global_category (category_title) VALUES (%s) RETURNING id;"
+        CategoryService.category_connection.cursor.execute(sql, (category,))
 
         CategoryService.category_connection.connection.commit()
         global_id = CategoryService.category_connection.cursor.fetchall()
@@ -20,9 +17,9 @@ class CategoryService:
     @staticmethod
     def find_id_by_category_for_global(category):
         category = "\'" + category + "\'"
-        sql = """SELECT id FROM global_category WHERE category_title = """ + category
+        sql = """SELECT id FROM global_category WHERE category_title = %s"""
 
-        CategoryService.category_connection.cursor.execute(sql)
+        CategoryService.category_connection.cursor.execute(sql, (category,))
         global_category_id = CategoryService.category_connection.cursor.fetchall()
 
         if not global_category_id:
@@ -39,14 +36,10 @@ class CategoryService:
 
     @staticmethod
     def insert_sub(category, global_id):
-        sql = "INSERT INTO sub_category (sub_title, global_id) VALUES (%s, %s);"
+        sql = "INSERT INTO sub_category (sub_title, global_id) VALUES (%s, %s) RETURNING id;"
 
-        record_to_insert = (category, global_id)
-        CategoryService.category_connection.cursor.execute(sql, record_to_insert)
+        CategoryService.category_connection.cursor.execute(sql,  (category, global_id))
         CategoryService.category_connection.connection.commit()
-
-        sql = """SELECT currval(pg_get_serial_sequence('sub_category','id'));"""
-        CategoryService.category_connection.cursor.execute(sql)
 
         sub_id = CategoryService.category_connection.cursor.fetchall()
         return sub_id[0][0]
@@ -54,9 +47,8 @@ class CategoryService:
     @staticmethod
     def find_id_by_category_for_sub(category):
         category = "\'" + category + "\'"
-        sql = """SELECT id FROM sub_category WHERE sub_title = """ + category
-
-        CategoryService.category_connection.cursor.execute(sql)
+        sql = """SELECT id FROM sub_category WHERE sub_title = %s """
+        CategoryService.category_connection.cursor.execute(sql, (category,))
         sub_category_id = CategoryService.category_connection.cursor.fetchall()
 
         if not sub_category_id:

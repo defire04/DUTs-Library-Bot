@@ -23,6 +23,11 @@ class BookController:
     def find_by_title_and_create_query(title):
 
         books = BookController.find_by_title(title)
+
+        if not books:
+            return {
+                "books": books,
+            }
         query_id = QueryController.create(title, books)
 
         return {

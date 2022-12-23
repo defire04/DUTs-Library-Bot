@@ -13,7 +13,7 @@ class BookController:
 
     @staticmethod
     def find_by_title(title):
-        return  BookController.books_without_duplicates(BookController.result_to_list(BookService.find_by_title(title)))
+        return BookController.books_without_duplicates(BookController.result_to_list(BookService.find_by_title(title)))
 
     @staticmethod
     def find_books_by_book_category(category_id):

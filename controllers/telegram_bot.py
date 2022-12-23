@@ -24,8 +24,7 @@ inline_kb_full = InlineKeyboardMarkup(row_width=2).add(button)
 
 @dp.message_handler(commands=['start'])
 async def process_start_command(message: types.Message):
-    await message.reply("Привет!\nНапиши мне название книги!\nЗапрос должен содержать минимум 3 символа!",
-                        reply_markup=inline_kb_full)
+    await message.reply("Привет!\nНапиши мне название книги!\nЗапрос должен содержать минимум 3 символа!")
 
 
 def get_search_result_from_search_query(search_string: str):

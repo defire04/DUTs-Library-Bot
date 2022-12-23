@@ -26,7 +26,6 @@ class UserController:
 
         return users
 
-
     @staticmethod
     def finalize():
         UserService.finalize()

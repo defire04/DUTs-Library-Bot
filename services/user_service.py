@@ -7,8 +7,8 @@ class UserService:
 
     @staticmethod
     def insert(user: User):
-        sql = """INSERT INTO users (user_id, username) VALUES (%s, %s)"""
-        UserService.user_connection.cursor.execute(sql, (user.user_id, user.username))
+        sql = """INSERT INTO users (user_id, username, full_name) VALUES (%s, %s, %s)"""
+        UserService.user_connection.cursor.execute(sql, (user.user_id, user.username, user.full_name))
         UserService.user_connection.connection.commit()
 
     @staticmethod

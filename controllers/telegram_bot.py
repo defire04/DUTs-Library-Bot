@@ -198,9 +198,8 @@ async def unknown_type_of_message(msg: types.Message):
 
 
 def add_new_user(user_message: types.Message):
-    print(user_message.from_user.full_name)
     if not UserController.check_is_user_in_db(user_message.from_user.id):
-        user = User(user_message.from_user.id, user_message.from_user.username)
+        user = User(user_message.from_user.id, user_message.from_user.username, user_message.from_user.full_name)
         UserController.insert(user)
 
 

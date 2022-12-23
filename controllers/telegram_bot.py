@@ -17,7 +17,7 @@ from controllers.user_controller import UserController
 from models.search_result import PagesResult, SearchResult
 from models.user import User
 
-from resources.config import TOKEN, admin1_id
+from resources.config import TOKEN, admins
 
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from controllers.library_controller import LibraryController
@@ -25,7 +25,7 @@ from controllers.library_controller import LibraryController
 storage = MemoryStorage()
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
-ADMINS = [admin1_id]
+ADMINS = admins
 
 action = ButtonPageAction(1, 2)
 button = InlineKeyboardButton('Text', callback_data=action.stringify())
@@ -56,6 +56,7 @@ async def process_start_command(msg: types.Message):
         if msg.from_user.id == admin_id:
             await msg.answer('Добро пожаловать в Админ-Панель! Выберите действие на клавиатуре',
                              reply_markup=admin_buttons)
+            break
         else:
             await msg.reply("Добро пожаловать в DUT Library!\nВыберите в меню как вы хотите искать\n",
                             reply_markup=user_buttons)
@@ -80,6 +81,7 @@ async def spam(msg: types.Message):
         if msg.from_user.id == admin_id:
             await msg.answer('Напишите текст рассылки', reply_markup=back_buttons)
             await Dialog.spam.set()
+            break
         else:
             await msg.answer('Вы не являетесь админом')
 
@@ -151,15 +153,8 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
 
         await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
         await msg.delete()
-        # TODO тут проблема
+        # TODO тут проблема 
         await state.finish()
-
-        for admin_id in ADMINS:
-            if admin_id == msg.from_user.id:
-
-                await msg.answer("Главное меню ", reply_markup=admin_buttons)
-            else:
-                await msg.answer("Главное меню", reply_markup=user_buttons)
 
 
 @dp.message_handler(state='*', text='Назад')
@@ -198,8 +193,9 @@ async def unknown_type_of_message(msg: types.Message):
 
 
 def add_new_user(user_message: types.Message):
+    print(user_message.from_user.full_name)
     if not UserController.check_is_user_in_db(user_message.from_user.id):
-        user = User(user_message.from_user.id, user_message.from_user.username, user_message.from_user.full_name)
+        user = User(user_message.from_user.id, user_message.from_user.username)
         UserController.insert(user)
 
 

@@ -13,7 +13,6 @@ class CategoryController:
         if global_category_id is None:
             global_category_id = CategoryService.insert_global(category)
 
-        print(global_category_id)
         return global_category_id
 
     @staticmethod

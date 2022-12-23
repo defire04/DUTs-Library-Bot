@@ -1,25 +1,19 @@
-from typing import List
-
-import psycopg2
-
-from models.category import Category
-from resources.config import host, username, password, datasource
+from models.connect import Connect
 
 
 class CategoryService:
-    connection = psycopg2.connect(host=host, user=username, password=password, database=datasource)
-    cursor = connection.cursor()
+    category_connection: Connect = Connect("CategoryService")
 
     @staticmethod
     def insert_global(category):
         sql = "INSERT INTO global_category (category_title) values ('" + category + "');"
-        CategoryService.cursor.execute(sql)
+        CategoryService.category_connection.cursor.execute(sql)
 
         sql = """SELECT currval(pg_get_serial_sequence('global_category','id'));"""
-        CategoryService.cursor.execute(sql)
+        CategoryService.category_connection.cursor.execute(sql)
 
-        CategoryService.connection.commit()
-        global_id = CategoryService.cursor.fetchall()
+        CategoryService.category_connection.connection.commit()
+        global_id = CategoryService.category_connection.cursor.fetchall()
 
         return global_id[0][0]
 
@@ -28,8 +22,8 @@ class CategoryService:
         category = "\'" + category + "\'"
         sql = """SELECT id FROM global_category WHERE category_title = """ + category
 
-        CategoryService.cursor.execute(sql)
-        global_category_id = CategoryService.cursor.fetchall()
+        CategoryService.category_connection.cursor.execute(sql)
+        global_category_id = CategoryService.category_connection.cursor.fetchall()
 
         if not global_category_id:
             return None
@@ -39,22 +33,22 @@ class CategoryService:
     def get_global_categories():
         sql = """SELECT * from global_category """
         print(sql)
-        CategoryService.cursor.execute(sql)
+        CategoryService.category_connection.cursor.execute(sql)
 
-        return CategoryService.cursor.fetchall()
+        return CategoryService.category_connection.cursor.fetchall()
 
     @staticmethod
     def insert_sub(category, global_id):
         sql = "INSERT INTO sub_category (sub_title, global_id) VALUES (%s, %s);"
 
         record_to_insert = (category, global_id)
-        CategoryService.cursor.execute(sql, record_to_insert)
-        CategoryService.connection.commit()
+        CategoryService.category_connection.cursor.execute(sql, record_to_insert)
+        CategoryService.category_connection.connection.commit()
 
         sql = """SELECT currval(pg_get_serial_sequence('sub_category','id'));"""
-        CategoryService.cursor.execute(sql)
+        CategoryService.category_connection.cursor.execute(sql)
 
-        sub_id = CategoryService.cursor.fetchall()
+        sub_id = CategoryService.category_connection.cursor.fetchall()
         return sub_id[0][0]
 
     @staticmethod
@@ -62,8 +56,8 @@ class CategoryService:
         category = "\'" + category + "\'"
         sql = """SELECT id FROM sub_category WHERE sub_title = """ + category
 
-        CategoryService.cursor.execute(sql)
-        sub_category_id = CategoryService.cursor.fetchall()
+        CategoryService.category_connection.cursor.execute(sql)
+        sub_category_id = CategoryService.category_connection.cursor.fetchall()
 
         if not sub_category_id:
             return None
@@ -73,16 +67,16 @@ class CategoryService:
     def find_book_categories_by_sub_id(global_id):
         sql = """SELECT * from sub_category WHERE global_id = %s"""
         print(sql)
-        CategoryService.cursor.execute(sql,(global_id,))
+        CategoryService.category_connection.cursor.execute(sql, (global_id,))
 
-        return CategoryService.cursor.fetchall()
+        return CategoryService.category_connection.cursor.fetchall()
 
     @staticmethod
     def find_id_by_category_for_book(category):
         sql = """SELECT id FROM book_category WHERE category_title = %s"""
 
-        CategoryService.cursor.execute(sql, (category,))
-        book_category_id = CategoryService.cursor.fetchall()
+        CategoryService.category_connection.cursor.execute(sql, (category,))
+        book_category_id = CategoryService.category_connection.cursor.fetchall()
 
         if not book_category_id:
             return None
@@ -91,10 +85,10 @@ class CategoryService:
     @staticmethod
     def insert_book_category(category, sub_id):
         sql = "INSERT INTO book_category (category_title, sub_id) VALUES (%s, %s) RETURNING id;"""
-        CategoryService.cursor.execute(sql, (category,sub_id))
+        CategoryService.category_connection.cursor.execute(sql, (category, sub_id))
 
-        book_category_id = CategoryService.cursor.fetchall()
-        CategoryService.connection.commit()
+        book_category_id = CategoryService.category_connection.cursor.fetchall()
+        CategoryService.category_connection.connection.commit()
 
         return book_category_id[0][0]
 
@@ -102,19 +96,10 @@ class CategoryService:
     def find_book_categories_by_sub_id(sub_id):
         sql = """SELECT * from book_category WHERE sub_id = %s"""
         print(sql)
-        CategoryService.cursor.execute(sql,(sub_id,))
+        CategoryService.category_connection.cursor.execute(sql, (sub_id,))
 
-        return CategoryService.cursor.fetchall()
-
-
-
+        return CategoryService.category_connection.cursor.fetchall()
 
     @staticmethod
     def finalize():
-        CategoryService.cursor.close()
-        CategoryService.connection.close()
-        print("Database connection dead! ------------------ Category")
-
-
-
-
+        CategoryService.category_connection.finalize()

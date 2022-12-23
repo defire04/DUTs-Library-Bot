@@ -59,7 +59,6 @@ class CategoryController:
 
         return categories
 
-
     @staticmethod
     def finalize():
         CategoryService.finalize()

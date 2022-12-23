@@ -3,10 +3,11 @@ class Book:
     def __init__(self, title):
         self.id = None
         self.title = title
+        self.author = None
 
     @classmethod
     def create_book(cls, id, title, author, lang, document_size, year_of_publication, publishing_house, country,
-                    number_of_pages, availability_in_the_library,availability_in_electronic_form, added,
+                    number_of_pages, availability_in_the_library, availability_in_electronic_form, added,
                     classification_id, document_type, link, sub_category, global_category):
         book = cls(title)
         book.id = id
@@ -28,3 +29,5 @@ class Book:
         book.global_category = global_category
         return book
 
+    def __eq__(self, other):
+        return self.title == other.title and self.author == other.author

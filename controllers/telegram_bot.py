@@ -4,6 +4,7 @@ from aiogram.utils import executor
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ContentType
 
 from controllers.book_controller import BookController
+from controllers.category_controller import CategoryController
 from controllers.keyboard_controller import KeyboardController
 from controllers.message_controller import MessageController
 from controllers.query_controller import QueryController
@@ -57,7 +58,7 @@ async def handel_find_book(msg: types.Message):
 
     keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
 
-    message = MessageController.preapare_page_message(pages.get_page(page_index))
+    message = MessageController.prepare_page_message(pages.get_page(page_index))
 
     await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
     await msg.delete()
@@ -78,7 +79,7 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
 
     keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
 
-    message_text = MessageController.preapare_page_message(pages.get_page(page_index))
+    message_text = MessageController.prepare_page_message(pages.get_page(page_index))
     await message.edit_text(message_text, parse_mode="html")
     await message.edit_reply_markup(keyboard)
 
@@ -101,3 +102,5 @@ def start():
     executor.start_polling(dp)
     BookController.finalize()
     QueryController.finalize()
+    CategoryController.finalize()
+    UserController.finalize()

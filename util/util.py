@@ -1,4 +1,4 @@
-def string_trim(message, max_size=40):
+def string_trim(message, max_size=30):
     if len(message) > max_size:
         return message[:max_size] + "..."
     else:

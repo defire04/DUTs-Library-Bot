@@ -9,3 +9,8 @@ class UserController:
     @staticmethod
     def check_is_user_in_db(user_id):
         return UserService.find_user_by_user_id(user_id)
+
+    @staticmethod
+    def finalize():
+        UserService.finalize()
+

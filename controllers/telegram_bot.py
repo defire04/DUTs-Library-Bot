@@ -77,31 +77,27 @@ async def get_users_for_admin(msg: types.Message):
 
 @dp.message_handler(content_types=ContentType.ANY, text='Рассылка')
 async def spam(msg: types.Message):
-    for admin_id in ADMINS:
-        if msg.from_user.id == admin_id:
-            await msg.answer('Напишите текст рассылки', reply_markup=back_buttons)
-            await Dialog.spam.set()
-            break
-        else:
-            await msg.answer('Вы не являетесь админом')
+    if msg.from_user.id in ADMINS:
+        await msg.answer('Напишите текст рассылки', reply_markup=back_buttons)
+        await Dialog.spam.set()
+    else:
+        await msg.answer('Вы не являетесь админом')
 
 
 @dp.message_handler(state=Dialog.spam)
 async def start_spam(msg: types.Message, state: FSMContext):
     if msg.text == 'Назад':
-        for admin_id in ADMINS:
-            if admin_id == msg.from_user.id:
-                await msg.answer('Главное меню', reply_markup=admin_buttons)
-            else:
-                await msg.answer('Главное меню', reply_markup=user_buttons)
+        if msg.from_user.id in ADMINS:
+            await msg.answer('Главное меню', reply_markup=admin_buttons)
+        else:
+            await msg.answer('Главное меню', reply_markup=user_buttons)
 
         await state.finish()
     else:
         for user in UserController.get_users():
-            for admin_id in ADMINS:
-                if user.user_id != admin_id:
-                    # await bot.send_photo(user.user_id, msg.photo)
-                    await bot.send_message(user.user_id, msg.text)
+            if user.user_id not in ADMINS:
+                # await bot.send_photo(user.user_id, msg.photo)
+                await bot.send_message(user.user_id, msg.text)
 
         await msg.answer('Рассылка завершена')
         await state.finish()
@@ -125,11 +121,10 @@ async def start_find_books_by_title(msg: types.Message):
 @dp.message_handler(state=Dialog.search_books)
 async def handel_find_book(msg: types.Message, state: FSMContext):
     if msg.text == 'Назад':
-        for admin_id in ADMINS:
-            if admin_id == msg.from_user.id:
-                await msg.answer('Главное меню', reply_markup=admin_buttons)
-            else:
-                await msg.answer('Главное меню', reply_markup=user_buttons)
+        if msg.from_user.id in ADMINS:
+            await msg.answer('Главное меню', reply_markup=admin_buttons)
+        else:
+            await msg.answer('Главное меню', reply_markup=user_buttons)
 
         await state.finish()
 
@@ -193,9 +188,9 @@ async def unknown_type_of_message(msg: types.Message):
 
 
 def add_new_user(user_message: types.Message):
-    print(user_message.from_user.full_name)
+
     if not UserController.check_is_user_in_db(user_message.from_user.id):
-        user = User(user_message.from_user.id, user_message.from_user.username, user_message.from_user)
+        user = User(user_message.from_user.id, user_message.from_user.username, user_message.from_user.full_name)
         UserController.insert(user)
 
 

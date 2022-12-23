@@ -151,8 +151,15 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
 
         await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
         await msg.delete()
-        # TODO тут проблема 
+        # TODO тут проблема
         await state.finish()
+
+        for admin_id in ADMINS:
+            if admin_id == msg.from_user.id:
+
+                await msg.answer("Главное меню ", reply_markup=admin_buttons)
+            else:
+                await msg.answer("Главное меню", reply_markup=user_buttons)
 
 
 @dp.message_handler(state='*', text='Назад')

@@ -5,8 +5,6 @@ import json
 from util.multimethod import MultipleMeta
 
 
-
-
 class Actions:
     SWITCH_PAGE = 0
 
@@ -73,4 +71,4 @@ class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
 
 action = ButtonAction.from_json(
     '{"a": 0, "pl": {"pg": 1, "d": 12}}')
-print(len(action.stringify()))
+

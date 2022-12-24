@@ -10,10 +10,10 @@ from aiogram.dispatcher import FSMContext
 
 from controllers.book_controller import BookController
 from controllers.category_controller import CategoryController
-from controllers.keyboard_controller import KeyboardController
-from controllers.message_controller import MessageController
 from controllers.query_controller import QueryController
 from controllers.user_controller import UserController
+from controllers.keyboard_controller import KeyboardController
+from controllers.message_controller import MessageController
 from models.search_result import PagesResult, SearchResult
 from models.user import User
 
@@ -27,9 +27,6 @@ bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
 ADMINS = admins
 
-action = ButtonPageAction(1, 2)
-button = InlineKeyboardButton('Text', callback_data=action.stringify())
-inline_kb_full = InlineKeyboardMarkup(row_width=2).add(button)
 
 admin_buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
 admin_buttons.add("Рассылка")

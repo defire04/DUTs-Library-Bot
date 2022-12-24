@@ -11,7 +11,7 @@ class SearchResult:
 
 
 class PagesResult:
-    def __init__(self, result: SearchResult, results_per_page: int = 4):
+    def __init__(self, result: SearchResult, results_per_page: int = 3):
         self.result = result
         self.results_per_page = results_per_page
 

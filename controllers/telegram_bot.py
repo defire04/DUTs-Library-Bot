@@ -56,6 +56,7 @@ dp.register_callback_query_handler(sub_category_search_handler, create_filter_ca
 dp.register_callback_query_handler(book_category_search_handler, create_filter_category_action_by_type(CategoriesEnum.BOOK))
 
 
+
 @dp.callback_query_handler(create_filter_query_by_action(Actions.START_SEARCH))
 async def handle_search(callback_querry: types.CallbackQuery):
     await callback_querry.message.delete()
@@ -68,6 +69,7 @@ async def handle_search_exit(callback_querry: types.CallbackQuery, state: FSMCon
     await state.finish()
     await callback_querry.message.answer(**Messages.start_message.get_args())
     await callback_querry.message.delete()
+
 
 @dp.message_handler(content_types=['text'], text='Пользователи')
 async def get_users_for_admin(msg: types.Message):
@@ -97,7 +99,7 @@ async def start_spam(msg: types.Message, state: FSMContext):
         if msg.from_user.id in ADMINS:
             await msg.answer('Главное меню', reply_markup=admin_buttons)
         else:
-            KeyboardController.remove_inline_keyboard(msg)
+            await KeyboardController.remove_inline_keyboard(msg)
             await msg.answer(**Messages.start_message.get_args())
         await state.finish()
     else:
@@ -155,7 +157,7 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
         message = MessageController.prepare_page_message(pages.get_page(page_index))
 
         await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
-        # TODO тут проблема 
+        # TODO тут проблема
         await state.finish()
 
 
@@ -167,7 +169,6 @@ async def back(msg: Message):
         else:
             await KeyboardController.remove_inline_keyboard(msg)
             await msg.answer(**Messages.start_message.get_args())
-    
 
 
 @dp.callback_query_handler(create_filter_query_by_action(Actions.SWITCH_PAGE))
@@ -195,9 +196,6 @@ async def unknown_type_of_message(msg: types.Message):
         chat_id=msg.from_user.id,
         sticker=r"CAACAgIAAxkBAAEG6K9jocRBRnn3HykoJBwDzHVxv3FN5wACEgADbrttNcV0uCSF9fevLAQ"
     )
-
-
-
 
 
 def start():

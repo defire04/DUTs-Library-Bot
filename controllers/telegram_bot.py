@@ -56,11 +56,12 @@ async def handle_search(callback_querry: types.CallbackQuery):
     await Dialog.search_books.set()
     await callback_querry.message.answer('Ищи', reply_markup=back_buttons)
 
-# @dp.callback_query_handler(
-#     lambda callback: callback and callback.data == '2', state=Dialog.search_books)
-# async def handle_search_exit(callback_querry: types.CallbackQuery, state: FSMContext):
-#     await state.finish()
-#     await Messages.start_message.edit_to(callback_querry.message)
+
+@dp.callback_query_handler(create_filter_query_by_action(Actions.TO_MAIN_MENU))
+async def handle_search_exit(callback_querry: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+    await callback_querry.message.answer(**Messages.start_message.get_args())
+    await callback_querry.message.delete()
 
 @dp.message_handler(content_types=['text'], text='Пользователи')
 async def get_users_for_admin(msg: types.Message):
@@ -138,7 +139,7 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
         pages = PagesResult(search_result)
 
         if not search_result:
-            await bot.send_message(msg.from_user.id, "Такой книги нет или запрос не верен!")
+            await msg.answer(**Messages.no_book_message.get_args())
             return
 
         page_index = 0
@@ -148,10 +149,8 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
         message = MessageController.prepare_page_message(pages.get_page(page_index))
 
         await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
-        await msg.delete()
         # TODO тут проблема 
         await state.finish()
-    await msg.delete()
 
 
 @dp.message_handler(state='*', text='Назад')
@@ -160,7 +159,7 @@ async def back(msg: Message):
         if msg.from_user.id == admin_id:
             await msg.answer('Главное меню', reply_markup=admin_buttons)
         else:
-            KeyboardController.remove_inline_keyboard(msg)
+            await KeyboardController.remove_inline_keyboard(msg)
             await msg.answer(**Messages.start_message.get_args())
     
 

@@ -14,6 +14,8 @@ class KeyboardController:
             keyboard.insert(KeyboardController.create_previous_button(page_index, query_id))
         if pages.get_total_pages_count() - 1 > page_index:
             keyboard.insert(KeyboardController.create_next_button(page_index, query_id))
+        
+        keyboard.add(KeyboardController.create_to_main_menu_button())
 
         return keyboard
 
@@ -23,6 +25,12 @@ class KeyboardController:
         keyboard = InlineKeyboardMarkup(row_width=2)
         search_button = InlineKeyboardButton('Search book', callback_data=action.stringify())
         keyboard.add(search_button)
+        return keyboard
+
+    @staticmethod
+    def create_back_to_main_menu_keyboard():
+        keyboard = InlineKeyboardMarkup()
+        keyboard.add(KeyboardController.create_to_main_menu_button())
         return keyboard
 
     
@@ -39,6 +47,12 @@ class KeyboardController:
     def create_page_button(text: str, page_index: int, query_id: int):
         action = ButtonPageAction(page_index, query_id)
         button = InlineKeyboardButton(text, callback_data=action.stringify())
+        return button
+
+    @staticmethod
+    def create_to_main_menu_button():
+        action = ButtonMenuAction(Actions.TO_MAIN_MENU)
+        button = InlineKeyboardButton('Back to main menu', callback_data=action.stringify())
         return button
 
     @staticmethod

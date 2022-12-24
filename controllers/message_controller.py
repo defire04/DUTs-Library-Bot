@@ -7,11 +7,11 @@ from util.util import string_trim
 class MessageController:
     @staticmethod
     def prepare_page_message(page: List[Book]):
-        books_strings = []
+        books_strings = ["По вашему запросу мы нашли такие книги:  "]
+
         for book in page:
             books_strings.append(
-                            
-                            "📖<strong>" + string_trim(str(book.title)) + "</strong>\n\n" +
+                            "📖<strong>" + string_trim(str(book.title)) + "</strong>\n" +
                             "👴Автор: " + string_trim(str(book.author)) + "\n"
                             "📅Год публикации: " + str(book.year_of_publication) + "\n"
                             "🧷<a href='" + str(book.link) + "'>Ссылка на книгу</a>")

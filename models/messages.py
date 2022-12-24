@@ -12,3 +12,7 @@ class Messages:
         reply_markup=KeyboardController.create_back_to_main_menu_keyboard()
     )
 
+    global_category_pick_message = MessageCreator(
+        "1",
+        reply_markup=KeyboardController.create_global_categories_keyboard()
+    )

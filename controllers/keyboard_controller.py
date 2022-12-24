@@ -1,5 +1,8 @@
-from actions.action_creator import ButtonMenuAction, ButtonPageAction
+from typing import List
+from actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction
+from controllers.category_controller import CategoryController
 from models.actions import Actions
+from models.category import CategoriesEnum, Category
 from models.search_result import PagesResult
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, ReplyKeyboardRemove
 
@@ -21,10 +24,13 @@ class KeyboardController:
 
     @staticmethod
     def create_start_keyboard():
-        action = ButtonMenuAction(Actions.START_SEARCH)
+        search_action = ButtonMenuAction(Actions.START_SEARCH)
+        search_button = InlineKeyboardButton('Search book', callback_data=search_action.stringify())
+        category_action = ButtonCategoryAction(0, CategoriesEnum.GLOBAL)
+        category_button = InlineKeyboardButton('Search book', callback_data=category_action.stringify())
         keyboard = InlineKeyboardMarkup(row_width=2)
-        search_button = InlineKeyboardButton('Search book', callback_data=action.stringify())
         keyboard.add(search_button)
+        keyboard.add(category_button)
         return keyboard
 
     @staticmethod
@@ -33,6 +39,26 @@ class KeyboardController:
         keyboard.add(KeyboardController.create_to_main_menu_button())
         return keyboard
 
+    @staticmethod
+    def create_global_categories_keyboard():
+        return KeyboardController.create_categories_keyboard(CategoryController.get_global_categories(), CategoriesEnum.GLOBAL)
+        
+    @staticmethod
+    def create_sub_categories_keyboard(global_id: int):
+        return KeyboardController.create_categories_keyboard(CategoryController.find_sub_categories_by_global_id(global_id), CategoriesEnum.GLOBAL)
+
+    @staticmethod
+    def create_book_categories_keyboard(sub_id: int):
+        return KeyboardController.create_categories_keyboard(CategoryController.find_book_categories_by_sub_id(sub_id), CategoriesEnum.GLOBAL)
+
+    @staticmethod
+    def create_categories_keyboard(category_list: List[Category], category_type: int):
+        keyboard = InlineKeyboardMarkup()
+        for category in category_list:
+            action = ButtonCategoryAction(category.id, category_type)
+            button = InlineKeyboardButton(category.title, callback_data=action.stringify())
+            keyboard.insert(button)
+        return keyboard
     
 
     @staticmethod

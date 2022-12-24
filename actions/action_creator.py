@@ -42,8 +42,29 @@ class ButtonMenuActionPayload():
     def to_shorthand_payload(self):
         return {}
 
+class ButtonCategoryActionPayload(metaclass=MultipleMeta):
+
+    def __init__(self, categry_id: int, category_type: str):
+        super().__init__()
+        self.categry_id = categry_id
+        self.category_type = category_type
+        pass
+
+    def __init__(self, rawPayload: dict) -> None:
+        super().__init__()
+        self.__init__(rawPayload["id"], rawPayload["ty"])
+        pass
+
+    def to_shorthand_payload(self):
+        return {
+            "id": self.categry_id,
+            "ty": self.category_type
+        }
+
+
 PAYLOADS = {
     Actions.SWITCH_PAGE: ButtonPageActionPayload,
+    Actions.TO_CATEGORY_MENU: ButtonCategoryActionPayload
 }
 
 P = TypeVar('P')
@@ -85,3 +106,11 @@ class ButtonMenuAction(ButtonAction[None]):
     def __init__(self, action: int):
         payload = None
         super().__init__(action, payload)
+
+
+
+class ButtonCategoryAction(ButtonAction[ButtonCategoryActionPayload]):
+    def __init__(self, category_id: int, category_type: str):
+        payload = ButtonPageActionPayload(
+            category_id, category_type)
+        super().__init__(Actions.TO_CATEGORY_MENU, payload)

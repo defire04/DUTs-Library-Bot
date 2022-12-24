@@ -18,8 +18,10 @@ from controllers.user_controller import UserController
 from models.messages import Messages
 from models.search_result import PagesResult, SearchResult
 from models.user import User
+from telegram_bot.handlers.category_search_handlers import book_category_search_handler, create_filter_category_action_by_type, global_category_search_handler, sub_category_search_handler
 from telegram_bot.handlers.process_start_command import process_start_command
 from resources.config import TOKEN, admins
+from models.category import CategoriesEnum
 
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from controllers.library_controller import LibraryController
@@ -49,6 +51,10 @@ class Dialog(StatesGroup):
 
 
 dp.register_message_handler(commands=['start'], callback=process_start_command)
+dp.register_callback_query_handler(global_category_search_handler, create_filter_category_action_by_type(CategoriesEnum.GLOBAL))
+dp.register_callback_query_handler(sub_category_search_handler, create_filter_category_action_by_type(CategoriesEnum.SUB))
+dp.register_callback_query_handler(book_category_search_handler, create_filter_category_action_by_type(CategoriesEnum.BOOK))
+
 
 @dp.callback_query_handler(create_filter_query_by_action(Actions.START_SEARCH))
 async def handle_search(callback_querry: types.CallbackQuery):

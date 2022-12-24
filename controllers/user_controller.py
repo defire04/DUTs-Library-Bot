@@ -1,5 +1,5 @@
 from typing import List
-
+from aiogram import types
 from models.user import User
 from services.user_service import UserService
 
@@ -25,6 +25,13 @@ class UserController:
             users.append(User.create(*user))
 
         return users
+
+    @staticmethod
+    def add_new_user(user_message: types.Message):
+
+        if not UserController.check_is_user_in_db(user_message.from_user.id):
+            user = User(user_message.from_user.id, user_message.from_user.username, user_message.from_user.full_name)
+            UserController.insert(user)
 
     @staticmethod
     def finalize():

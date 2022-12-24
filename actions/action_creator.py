@@ -3,10 +3,12 @@ from typing import Generic, TypeVar
 import json
 
 from util.multimethod import MultipleMeta
+from models.actions import Actions
 
 
-class Actions:
-    SWITCH_PAGE = 0
+
+
+
 
 
 class Payload(ABC):
@@ -34,6 +36,13 @@ class ButtonPageActionPayload(metaclass=MultipleMeta):
             "d": self.prepared_collection_id
         }
 
+class ButtonMenuActionPayload():
+
+    def __init__() -> None:
+        pass
+
+    def to_shorthand_payload(self):
+        return {}
 
 PAYLOADS = {
     Actions.SWITCH_PAGE: ButtonPageActionPayload
@@ -49,18 +58,24 @@ class ButtonAction(Generic[P]):
 
     @classmethod
     def from_json(cls, json_action: str):
-        parsed_action = json.loads(json_action)
+        try:
+            parsed_action = json.loads(json_action)
+        except:
+            return cls(-1, None)
+        if (parsed_action.__class__ is not dict):
+            return cls(-1, None)
         action = parsed_action["a"]
         payload = parsed_action["pl"]
         PayloadClass = PAYLOADS.get(action)
+        if not PayloadClass:
+            return cls(action, None)
         return cls(action, PayloadClass(payload))
 
     def stringify(self):
         return json.dumps({
             "a": self.id,
-            "pl": self.payload.to_shorthand_payload()
+            "pl": self.payload.to_shorthand_payload() if self.payload else self.payload
         }).replace(' ', '')
-
 
 class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
     def __init__(self, page_index: int, prepared_collection_id: int):
@@ -68,7 +83,7 @@ class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
             page_index, prepared_collection_id)
         super().__init__(Actions.SWITCH_PAGE, payload)
 
-
-action = ButtonAction.from_json(
-    '{"a": 0, "pl": {"pg": 1, "d": 12}}')
-
+class ButtonMenuAction(ButtonAction[None]):
+    def __init__(self, action: int):
+        payload = None
+        super().__init__(action, payload)

@@ -10,23 +10,25 @@ from aiogram.dispatcher import FSMContext
 
 from controllers.book_controller import BookController
 from controllers.category_controller import CategoryController
-from controllers.query_controller import QueryController
-from controllers.user_controller import UserController
 from controllers.keyboard_controller import KeyboardController
 from controllers.message_controller import MessageController
+from controllers.message_creator import MessageCreator
+from controllers.query_controller import QueryController
+from controllers.user_controller import UserController
+from models.messages import Messages
 from models.search_result import PagesResult, SearchResult
 from models.user import User
-
+from telegram_bot.handlers.process_start_command import process_start_command
 from resources.config import TOKEN, admins
 
 from actions.action_creator import ButtonAction, ButtonPageAction, Actions, ButtonPageActionPayload
 from controllers.library_controller import LibraryController
+from util.filter_query_by_action import create_filter_query_by_action
 
 storage = MemoryStorage()
 bot = Bot(token=TOKEN)
 dp = Dispatcher(bot, storage=storage)
 ADMINS = admins
-
 
 admin_buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
 admin_buttons.add("Рассылка")
@@ -46,18 +48,20 @@ class Dialog(StatesGroup):
     search_books = State()
 
 
-@dp.message_handler(commands=['start'])
-async def process_start_command(msg: types.Message):
-    add_new_user(msg)
-    for admin_id in ADMINS:
-        if msg.from_user.id == admin_id:
-            await msg.answer('Добро пожаловать в Админ-Панель! Выберите действие на клавиатуре',
-                             reply_markup=admin_buttons)
-            break
-        else:
-            await msg.reply("Добро пожаловать в DUT Library!\nВыберите в меню как вы хотите искать\n",
-                            reply_markup=user_buttons)
+dp.register_message_handler(commands=['start'], callback=process_start_command)
 
+@dp.callback_query_handler(create_filter_query_by_action(Actions.START_SEARCH))
+async def handle_search(callback_querry: types.CallbackQuery):
+    await callback_querry.message.delete()
+    await Dialog.search_books.set()
+    await callback_querry.message.answer('Ищи', reply_markup=back_buttons)
+
+
+@dp.callback_query_handler(create_filter_query_by_action(Actions.TO_MAIN_MENU))
+async def handle_search_exit(callback_querry: types.CallbackQuery, state: FSMContext):
+    await state.finish()
+    await callback_querry.message.answer(**Messages.start_message.get_args())
+    await callback_querry.message.delete()
 
 @dp.message_handler(content_types=['text'], text='Пользователи')
 async def get_users_for_admin(msg: types.Message):
@@ -87,8 +91,8 @@ async def start_spam(msg: types.Message, state: FSMContext):
         if msg.from_user.id in ADMINS:
             await msg.answer('Главное меню', reply_markup=admin_buttons)
         else:
-            await msg.answer('Главное меню', reply_markup=user_buttons)
-
+            KeyboardController.remove_inline_keyboard(msg)
+            await msg.answer(**Messages.start_message.get_args())
         await state.finish()
     else:
         for user in UserController.get_users():
@@ -121,7 +125,8 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
         if msg.from_user.id in ADMINS:
             await msg.answer('Главное меню', reply_markup=admin_buttons)
         else:
-            await msg.answer('Главное меню', reply_markup=user_buttons)
+            await KeyboardController.remove_inline_keyboard(msg)
+            await msg.answer(**Messages.start_message.get_args())
 
         await state.finish()
 
@@ -134,7 +139,7 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
         pages = PagesResult(search_result)
 
         if not search_result:
-            await bot.send_message(msg.from_user.id, "Такой книги нет или запрос не верен!")
+            await msg.answer(**Messages.no_book_message.get_args())
             return
 
         page_index = 0
@@ -144,7 +149,6 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
         message = MessageController.prepare_page_message(pages.get_page(page_index))
 
         await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
-        await msg.delete()
         # TODO тут проблема 
         await state.finish()
 
@@ -155,11 +159,12 @@ async def back(msg: Message):
         if msg.from_user.id == admin_id:
             await msg.answer('Главное меню', reply_markup=admin_buttons)
         else:
-            await msg.answer('Вы вернулись в главное меню', reply_markup=user_buttons)
+            await KeyboardController.remove_inline_keyboard(msg)
+            await msg.answer(**Messages.start_message.get_args())
+    
 
 
-@dp.callback_query_handler(
-    lambda callback: callback.data and ButtonAction.from_json(callback.data).id == Actions.SWITCH_PAGE)
+@dp.callback_query_handler(create_filter_query_by_action(Actions.SWITCH_PAGE))
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     action = ButtonAction[ButtonPageActionPayload].from_json(callback_query.data)
     page_index = action.payload.page_index
@@ -174,21 +179,19 @@ async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
 
     message_text = MessageController.prepare_page_message(pages.get_page(page_index))
-    await message.edit_text(message_text, parse_mode="html")
-    await message.edit_reply_markup(keyboard)
+
+    await MessageCreator(message_text, keyboard).edit_to(message)
 
 
 @dp.message_handler(content_types=ContentType.ANY)
 async def unknown_type_of_message(msg: types.Message):
-    await bot.send_sticker(chat_id=msg.from_user.id,
-                           sticker=r"CAACAgIAAxkBAAEG6K9jocRBRnn3HykoJBwDzHVxv3FN5wACEgADbrttNcV0uCSF9fevLAQ")
+    await bot.send_sticker(
+        chat_id=msg.from_user.id,
+        sticker=r"CAACAgIAAxkBAAEG6K9jocRBRnn3HykoJBwDzHVxv3FN5wACEgADbrttNcV0uCSF9fevLAQ"
+    )
 
 
-def add_new_user(user_message: types.Message):
 
-    if not UserController.check_is_user_in_db(user_message.from_user.id):
-        user = User(user_message.from_user.id, user_message.from_user.username, user_message.from_user.full_name)
-        UserController.insert(user)
 
 
 def start():

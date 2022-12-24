@@ -7,11 +7,11 @@ from models.messages import Messages
 
 from util.filter_query_by_action import create_filter_query_by_action
 
-def global_category_search_handler(callback_query: types.CallbackQuery):
+async def open_category_search_handler(callback_query: types.CallbackQuery):
     message = callback_query.message
-    Messages.global_category_pick_message.edit_to(message)
+    await Messages.global_category_pick_message.edit_to(message)
 
-def sub_category_search_handler(callback_query: types.CallbackQuery):
+async def global_category_search_handler(callback_query: types.CallbackQuery):
     message = callback_query.message
     action = ButtonAction[ButtonCategoryActionPayload].from_json(callback_query.data)
     id = action.payload.categry_id
@@ -19,18 +19,26 @@ def sub_category_search_handler(callback_query: types.CallbackQuery):
         "2",
         reply_markup=KeyboardController.create_sub_categories_keyboard(id)
     )
-    message_creator.edit_to(message)
+    await message_creator.edit_to(message)
 
-
-def book_category_search_handler(callback_query: types.CallbackQuery):
+async def sub_category_search_handler(callback_query: types.CallbackQuery):
     message = callback_query.message
     action = ButtonAction[ButtonCategoryActionPayload].from_json(callback_query.data)
     id = action.payload.categry_id
+    print('3')
     message_creator = MessageCreator(
         "3",
-        reply_markup=KeyboardController.create_sub_categories_keyboard(id)
+        reply_markup=KeyboardController.create_book_categories_keyboard(id)
     )
-    message_creator.edit_to(message)
+    await message_creator.edit_to(message)
+
+
+async def book_category_search_handler(callback_query: types.CallbackQuery):
+    message = callback_query.message
+    message_creator = MessageCreator(
+        "Books check"
+    )
+    await message_creator.edit_to(message)
 
 
 def create_filter_category_action_by_type(category_type: int):

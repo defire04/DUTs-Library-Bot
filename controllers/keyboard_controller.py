@@ -26,8 +26,8 @@ class KeyboardController:
     def create_start_keyboard():
         search_action = ButtonMenuAction(Actions.START_SEARCH)
         search_button = InlineKeyboardButton('Search book', callback_data=search_action.stringify())
-        category_action = ButtonCategoryAction(0, CategoriesEnum.GLOBAL)
-        category_button = InlineKeyboardButton('Search book', callback_data=category_action.stringify())
+        category_action = ButtonMenuAction(Actions.OPEN_CATEGORY_SEARCH)
+        category_button = InlineKeyboardButton('Categories', callback_data=category_action.stringify())
         keyboard = InlineKeyboardMarkup(row_width=2)
         keyboard.add(search_button)
         keyboard.add(category_button)
@@ -45,11 +45,11 @@ class KeyboardController:
         
     @staticmethod
     def create_sub_categories_keyboard(global_id: int):
-        return KeyboardController.create_categories_keyboard(CategoryController.find_sub_categories_by_global_id(global_id), CategoriesEnum.GLOBAL)
+        return KeyboardController.create_categories_keyboard(CategoryController.find_sub_categories_by_global_id(global_id), CategoriesEnum.SUB)
 
     @staticmethod
     def create_book_categories_keyboard(sub_id: int):
-        return KeyboardController.create_categories_keyboard(CategoryController.find_book_categories_by_sub_id(sub_id), CategoriesEnum.GLOBAL)
+        return KeyboardController.create_categories_keyboard(CategoryController.find_book_categories_by_sub_id(sub_id), CategoriesEnum.BOOK)
 
     @staticmethod
     def create_categories_keyboard(category_list: List[Category], category_type: int):

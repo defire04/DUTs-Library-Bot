@@ -46,7 +46,7 @@ class ButtonMenuActionPayload():
 
 class ButtonCategoryActionPayload(metaclass=MultipleMeta):
 
-    def __init__(self, categry_id: int, category_type: str):
+    def __init__(self, categry_id: int, category_type: int):
         super().__init__()
         self.categry_id = categry_id
         self.category_type = category_type
@@ -113,6 +113,6 @@ class ButtonMenuAction(ButtonAction[None]):
 
 class ButtonCategoryAction(ButtonAction[ButtonCategoryActionPayload]):
     def __init__(self, category_id: int, category_type: str):
-        payload = ButtonPageActionPayload(
+        payload = ButtonCategoryActionPayload(
             category_id, category_type)
         super().__init__(Actions.TO_CATEGORY_MENU, payload)

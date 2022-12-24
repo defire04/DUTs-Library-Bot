@@ -1,6 +1,7 @@
-from actions.action_creator import ButtonPageAction
+from actions.action_creator import ButtonMenuAction, ButtonPageAction
+from models.actions import Actions
 from models.search_result import PagesResult
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, ReplyKeyboardRemove
 
 
 class KeyboardController:
@@ -17,6 +18,16 @@ class KeyboardController:
         return keyboard
 
     @staticmethod
+    def create_start_keyboard():
+        action = ButtonMenuAction(Actions.START_SEARCH)
+        keyboard = InlineKeyboardMarkup(row_width=2)
+        search_button = InlineKeyboardButton('Search book', callback_data=action.stringify())
+        keyboard.add(search_button)
+        return keyboard
+
+    
+
+    @staticmethod
     def create_previous_button(current_page_index: int, query_id: int):
         return KeyboardController.create_page_button("◀ Back", current_page_index - 1, query_id)
 
@@ -29,3 +40,8 @@ class KeyboardController:
         action = ButtonPageAction(page_index, query_id)
         button = InlineKeyboardButton(text, callback_data=action.stringify())
         return button
+
+    @staticmethod
+    async def remove_inline_keyboard(msg: Message):
+        msg = await msg.answer('loading...', reply_markup=ReplyKeyboardRemove())
+        await msg.delete()

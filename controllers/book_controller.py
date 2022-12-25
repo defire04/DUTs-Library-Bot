@@ -24,8 +24,11 @@ class BookController:
         return BookController.result_to_list(BookService.find_books_by_book_category(category_id))
 
     @staticmethod
-    def find_by_title_and_create_query(title):
+    def find_books_by_author(author: str):
+        return BookController.result_to_list(BookService.find_books_by_author(author))
 
+    @staticmethod
+    def find_by_title_and_create_query(title):
         books = BookController.find_by_title(title)
 
         if not books:

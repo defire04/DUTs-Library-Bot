@@ -51,11 +51,14 @@ class Dialog(StatesGroup):
 
 
 dp.register_message_handler(commands=['start'], callback=process_start_command)
-dp.register_callback_query_handler(open_category_search_handler, create_filter_query_by_action(Actions.OPEN_CATEGORY_SEARCH))
-dp.register_callback_query_handler(global_category_search_handler, create_filter_category_action_by_type(CategoriesEnum.GLOBAL))
-dp.register_callback_query_handler(sub_category_search_handler, create_filter_category_action_by_type(CategoriesEnum.SUB))
-dp.register_callback_query_handler(book_category_search_handler, create_filter_category_action_by_type(CategoriesEnum.BOOK))
-
+dp.register_callback_query_handler(open_category_search_handler,
+                                   create_filter_query_by_action(Actions.OPEN_CATEGORY_SEARCH))
+dp.register_callback_query_handler(global_category_search_handler,
+                                   create_filter_category_action_by_type(CategoriesEnum.GLOBAL))
+dp.register_callback_query_handler(sub_category_search_handler,
+                                   create_filter_category_action_by_type(CategoriesEnum.SUB))
+dp.register_callback_query_handler(book_category_search_handler,
+                                   create_filter_category_action_by_type(CategoriesEnum.BOOK))
 
 
 @dp.callback_query_handler(create_filter_query_by_action(Actions.START_SEARCH))

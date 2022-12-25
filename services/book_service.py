@@ -98,6 +98,13 @@ class BookService:
         return tuple_book
 
     @staticmethod
+    def find_books_by_author(author: str):
+        sql = """SELECT * FROM books WHERE author = %s"""
+        BookService.book_connection.cursor.execute(sql, (author,))
+        tuple_book = BookService.book_connection.cursor.fetchall()
+        return tuple_book
+
+    @staticmethod
     def replace_c():
         sql_select = """UPDATE books SET title = REPLACE(title ,'С++', 'C++' ) WHERE title LIKE '%С++%';
                         UPDATE books SET title = REPLACE(title ,'С#', 'C#' ) WHERE title LIKE '%С#%';"""

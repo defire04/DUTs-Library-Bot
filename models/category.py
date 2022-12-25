@@ -4,6 +4,7 @@ class Category:
         self.id = id
         self.title = title
 
+
 class CategoriesEnum:
     GLOBAL = 0
     SUB = 1

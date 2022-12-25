@@ -21,8 +21,9 @@ from models.category import CategoriesEnum
 
 from telegram_bot.actions.action_creator import ButtonPageActionPayload
 from telegram_bot.controllers.library_controller import LibraryController
-from telegram_bot.handlers import process_start_command
+
 from telegram_bot.handlers.category_search_handlers import *
+from telegram_bot.handlers.process_start_command import process_start_command
 
 from util.filter_query_by_action import create_filter_query_by_action
 

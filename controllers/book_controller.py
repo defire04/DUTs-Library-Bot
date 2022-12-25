@@ -8,6 +8,10 @@ from controllers.query_controller import QueryController
 class BookController:
 
     @staticmethod
+    def reset_all_table():
+        BookService.reset_all_table()
+
+    @staticmethod
     def insert(book):
         BookService.insert(book)
 

@@ -1,5 +1,4 @@
 from typing import List
-
 from models.book import Book
 from services.query_servise import QueryService
 

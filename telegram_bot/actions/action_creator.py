@@ -5,12 +5,6 @@ import json
 from util.multimethod import MultipleMeta
 from models.actions import Actions
 
-
-
-
-
-
-
 class Payload(ABC):
     @abstractmethod
     def to_shorthand_payload(self) -> dict:
@@ -36,9 +30,9 @@ class ButtonPageActionPayload(metaclass=MultipleMeta):
             "d": self.prepared_collection_id
         }
 
-class ButtonMenuActionPayload():
+class ButtonMenuActionPayload:
 
-    def __init__() -> None:
+    def __init__(self) -> None:
         pass
 
     def to_shorthand_payload(self):

@@ -1,7 +1,7 @@
 from aiogram import types
-from actions.action_creator import ButtonAction, ButtonCategoryActionPayload
-from controllers.keyboard_controller import KeyboardController
-from controllers.message_creator import MessageCreator
+from telegram_bot.actions.action_creator import ButtonAction, ButtonCategoryActionPayload
+from telegram_bot.controllers.keyboard_controller import KeyboardController
+from telegram_bot.controllers.message_creator import MessageCreator
 from models.actions import Actions
 from models.messages import Messages
 

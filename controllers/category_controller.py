@@ -7,7 +7,7 @@ from services.category_service import CategoryService
 class CategoryController:
 
     @staticmethod
-    def insert_global_category_and_return(category):
+    def insert_global_category_and_return(category:Category):
         global_category_id = CategoryService.find_id_by_category_for_global(category)
 
         if global_category_id is None:

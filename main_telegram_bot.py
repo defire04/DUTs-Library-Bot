@@ -1,5 +1,5 @@
-from controllers import telegram_bot
+from telegram_bot.bot import bot
 
 if __name__ == '__main__':
-    telegram_bot.start()
+    bot.start()
 

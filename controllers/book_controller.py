@@ -1,8 +1,8 @@
 from typing import List
 
-from controllers.query_controller import QueryController
-from services.book_service import BookService
 from models.book import Book
+from services.book_service import BookService
+from controllers.query_controller import QueryController
 
 
 class BookController:

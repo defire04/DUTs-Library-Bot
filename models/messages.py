@@ -1,5 +1,5 @@
-from controllers.keyboard_controller import KeyboardController
-from controllers.message_creator import MessageCreator
+from telegram_bot.controllers.keyboard_controller import KeyboardController
+from telegram_bot.controllers.message_creator import MessageCreator
 
 class Messages:
     start_message = MessageCreator(

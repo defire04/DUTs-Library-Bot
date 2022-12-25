@@ -1,5 +1,4 @@
-from actions.action_creator import ButtonAction
-from models.actions import Actions
+from telegram_bot.actions.action_creator import ButtonAction
 from types import FunctionType
 
 

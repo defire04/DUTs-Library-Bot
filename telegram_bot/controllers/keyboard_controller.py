@@ -1,5 +1,5 @@
 from typing import List
-from actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction
+from telegram_bot.actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction
 from controllers.category_controller import CategoryController
 from models.actions import Actions
 from models.category import CategoriesEnum, Category

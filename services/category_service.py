@@ -36,7 +36,7 @@ class CategoryService:
     @staticmethod
     def insert_sub(category, global_id):
         sql = "INSERT INTO sub_category (sub_title, global_id) VALUES (%s, %s) RETURNING id;"
-        CategoryService.category_connection.cursor.execute(sql,  (category, global_id))
+        CategoryService.category_connection.cursor.execute(sql, (category, global_id))
         CategoryService.category_connection.connection.commit()
 
         sub_id = CategoryService.category_connection.cursor.fetchall()
@@ -88,6 +88,14 @@ class CategoryService:
         CategoryService.category_connection.cursor.execute(sql, (sub_id,))
 
         return CategoryService.category_connection.cursor.fetchall()
+
+    @staticmethod
+    def find_by_id(category_id):
+        sql = """SELECT * from book_category WHERE id = %s"""
+        print(sql)
+        CategoryService.category_connection.cursor.execute(sql, (category_id,))
+
+        return CategoryService.category_connection.cursor.fetchall()[0]
 
     @staticmethod
     def finalize():

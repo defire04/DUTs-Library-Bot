@@ -7,7 +7,7 @@ from services.category_service import CategoryService
 class CategoryController:
 
     @staticmethod
-    def insert_global_category_and_return(category:Category):
+    def insert_global_category_and_return(category: Category):
         global_category_id = CategoryService.find_id_by_category_for_global(category)
 
         if global_category_id is None:
@@ -57,6 +57,11 @@ class CategoryController:
             categories.append(Category(category[0], category[1]))
 
         return categories
+
+    @staticmethod
+    def find_book_category_by_id(category_id):
+        tuple_category = CategoryService.find_by_id(category_id)
+        return Category(tuple_category[0], tuple_category[1])
 
     @staticmethod
     def finalize():

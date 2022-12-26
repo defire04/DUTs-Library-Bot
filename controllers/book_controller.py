@@ -1,5 +1,6 @@
 from typing import List
 
+from controllers.category_controller import CategoryController
 from models.book import Book
 from services.book_service import BookService
 from controllers.query_controller import QueryController
@@ -36,6 +37,21 @@ class BookController:
                 "books": books,
             }
         query_id = QueryController.create(title, books)
+
+        return {
+            "books": books,
+            "query_id": query_id
+        }
+
+    @staticmethod
+    def find_by_book_category_and_create_query(category_id):
+        books = BookController.find_books_by_book_category(category_id)
+
+        if not books:
+            return {
+                "books": books,
+            }
+        query_id = QueryController.create(CategoryController.find_book_category_by_id(category_id).title, books)
 
         return {
             "books": books,

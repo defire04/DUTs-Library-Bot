@@ -4,3 +4,4 @@ class Actions:
     TO_MAIN_MENU = 2
     TO_CATEGORY_MENU = 3
     OPEN_CATEGORY_SEARCH = 4
+    CHANGE_SORT_DIRECTION = 5

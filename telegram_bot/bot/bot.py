@@ -21,9 +21,11 @@ from models.category import CategoriesEnum
 
 from telegram_bot.actions.action_creator import ButtonPageActionPayload
 from telegram_bot.controllers.library_controller import LibraryController
+from telegram_bot.fabrics.message_fabric import MessageFabric
 
 from telegram_bot.handlers.category_search_handlers import *
 from telegram_bot.handlers.process_start_command import process_start_command
+from telegram_bot.handlers.sort_direction_change_handler import sort_direction_change_handler
 
 from util.filter_query_by_action import create_filter_query_by_action
 
@@ -51,14 +53,26 @@ class Dialog(StatesGroup):
 
 
 dp.register_message_handler(commands=['start'], callback=process_start_command)
-dp.register_callback_query_handler(open_category_search_handler,
-                                   create_filter_query_by_action(Actions.OPEN_CATEGORY_SEARCH))
-dp.register_callback_query_handler(global_category_search_handler,
-                                   create_filter_category_action_by_type(CategoriesEnum.GLOBAL))
-dp.register_callback_query_handler(sub_category_search_handler,
-                                   create_filter_category_action_by_type(CategoriesEnum.SUB))
-dp.register_callback_query_handler(book_category_search_handler,
-                                   create_filter_category_action_by_type(CategoriesEnum.BOOK))
+dp.register_callback_query_handler(
+    open_category_search_handler,
+    create_filter_query_by_action(Actions.OPEN_CATEGORY_SEARCH)
+)
+dp.register_callback_query_handler(
+    global_category_search_handler,
+    create_filter_category_action_by_type(CategoriesEnum.GLOBAL)
+)
+dp.register_callback_query_handler(
+    sub_category_search_handler,
+    create_filter_category_action_by_type(CategoriesEnum.SUB)
+)
+dp.register_callback_query_handler(
+    book_category_search_handler,
+    create_filter_category_action_by_type(CategoriesEnum.BOOK)
+)
+dp.register_callback_query_handler(
+    sort_direction_change_handler,
+    create_filter_query_by_action(Actions.CHANGE_SORT_DIRECTION)
+)
 
 
 @dp.callback_query_handler(create_filter_query_by_action(Actions.START_SEARCH))
@@ -116,14 +130,7 @@ async def start_spam(msg: types.Message, state: FSMContext):
         await state.finish()
 
 
-def get_search_result_from_search_query(search_string: str):
-    book_list_and_query = BookController.find_by_title_and_create_query(search_string)
-
-    if not book_list_and_query["books"]:
-        return None
-
-    return SearchResult(book_list_and_query["books"], book_list_and_query["query_id"])
-
+    
 
 @dp.message_handler(content_types=['text'], text='Найти книгу по названию!')
 async def start_find_books_by_title(msg: types.Message):
@@ -147,21 +154,16 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
             await bot.send_message(msg.from_user.id, "Запрос должен содержать минимум 2 символа!")
             return
 
-        search_result = get_search_result_from_search_query(msg.text)
-        pages = PagesResult(search_result)
+        book_list_and_query = BookController.find_by_title_and_create_query(msg.text)
 
-        if not search_result:
+        if not book_list_and_query["books"]:
             await msg.answer(**Messages.no_book_message.get_args())
             return
 
-        page_index = 0
 
-        keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
+        message_creator = MessageFabric.create_page_message(book_list_and_query["books"], query_id=book_list_and_query["query_id"])
 
-        message = MessageController.prepare_page_message(pages.get_page(page_index))
-
-        await bot.send_message(msg.from_user.id, message, reply_markup=keyboard, parse_mode="html")
-        # TODO тут проблема
+        await msg.answer(**message_creator.get_args())
         await state.finish()
 
 
@@ -178,20 +180,14 @@ async def back(msg: Message):
 @dp.callback_query_handler(create_filter_query_by_action(Actions.SWITCH_PAGE))
 async def process_callback_kb1btn1(callback_query: types.CallbackQuery):
     action = ButtonAction[ButtonPageActionPayload].from_json(callback_query.data)
-    page_index = action.payload.page_index
     query_id = action.payload.prepared_collection_id
-
     books = LibraryController.find_books_by_query_id(query_id)
 
-    search_result = SearchResult(books, query_id)
-    pages = PagesResult(search_result)
     message = callback_query.message
 
-    keyboard = KeyboardController.create_pages_keyboard(pages, page_index)
+    message_creator = MessageFabric.create_page_message(books, action=action)
 
-    message_text = MessageController.prepare_page_message(pages.get_page(page_index))
-
-    await MessageCreator(message_text, keyboard).edit_to(message)
+    await message_creator.edit_to(message)
 
 
 @dp.message_handler(content_types=ContentType.ANY)

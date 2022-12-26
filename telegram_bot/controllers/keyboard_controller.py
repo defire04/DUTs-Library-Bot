@@ -1,5 +1,5 @@
 from typing import List
-from telegram_bot.actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction
+from telegram_bot.actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction, ButtonPageSortDirectionAction
 from controllers.category_controller import CategoryController
 from models.actions import Actions
 from models.category import CategoriesEnum, Category
@@ -9,12 +9,13 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, Message, R
 
 class KeyboardController:
     @staticmethod
-    def create_pages_keyboard(pages: PagesResult, page_index: int):
+    def create_pages_keyboard(pages: PagesResult, page_index: int = 0, sort_direction: int = 0):
         query_id = pages.result.search_query_id
 
-        keyboard = InlineKeyboardMarkup(row_width=2)
+        keyboard = InlineKeyboardMarkup(row_width=3)
         if page_index > 0:
             keyboard.insert(KeyboardController.create_previous_button(page_index, query_id))
+        keyboard.insert(KeyboardController.create_sort_button(query_id, sort_direction))
         if pages.get_total_pages_count() - 1 > page_index:
             keyboard.insert(KeyboardController.create_next_button(page_index, query_id))
         
@@ -57,29 +58,48 @@ class KeyboardController:
         for category in category_list:
             action = ButtonCategoryAction(category.id, category_type)
             button = InlineKeyboardButton(category.title, callback_data=action.stringify())
-            keyboard.insert(button)
+            keyboard.add(button)
         return keyboard
     
 
     @staticmethod
-    def create_previous_button(current_page_index: int, query_id: int):
-        return KeyboardController.create_page_button("◀ Back", current_page_index - 1, query_id)
+    def create_previous_button(current_page_index: int, query_id: int, sort_direction: int = 0):
+        return KeyboardController.create_page_change_button("◀ Back", current_page_index - 1, query_id, sort_direction)
 
     @staticmethod
-    def create_next_button(current_page_index: int, query_id: int):
-        return KeyboardController.create_page_button("Next ▶", current_page_index + 1, query_id)
+    def create_next_button(current_page_index: int, query_id: int, sort_direction: int = 0):
+        return KeyboardController.create_page_change_button("Next ▶", current_page_index + 1, query_id, sort_direction)
 
     @staticmethod
-    def create_page_button(text: str, page_index: int, query_id: int):
-        action = ButtonPageAction(page_index, query_id)
+    def create_page_change_button(text: str, page_index: int, query_id: int, sort_direction: int):
+        action = ButtonPageAction(page_index, query_id, sort_direction)
         button = InlineKeyboardButton(text, callback_data=action.stringify())
         return button
 
     @staticmethod
+    def create_page_sort_direction_button(text: str, page_index: int, query_id: int, sort_direction: int):
+        action = ButtonPageSortDirectionAction(page_index, query_id, sort_direction)
+        button = InlineKeyboardButton(text, callback_data=action.stringify())
+        return button 
+
+    @staticmethod
     def create_to_main_menu_button():
         action = ButtonMenuAction(Actions.TO_MAIN_MENU)
-        button = InlineKeyboardButton('Back to main menu', callback_data=action.stringify())
+        button = InlineKeyboardButton('Back to main menu ↩', callback_data=action.stringify())
         return button
+
+    @staticmethod
+    def create_sort_button(query_id: int, sort_direction: int = 0):
+        button_text = "Sort "
+        if sort_direction == 0:
+            button_text+="↕"
+        if sort_direction == -1:
+            button_text+="⏬"
+        if sort_direction == 1:
+            button_text+="⏫"
+        button = KeyboardController.create_page_sort_direction_button(button_text, 0, query_id, sort_direction)
+        return button
+        
 
     @staticmethod
     async def remove_inline_keyboard(msg: Message):

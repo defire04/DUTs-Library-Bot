@@ -1,9 +1,14 @@
 from aiogram import types
+from controllers.message_controller import MessageController
+from models.search_result import PagesResult, SearchResult
 from telegram_bot.actions.action_creator import ButtonAction, ButtonCategoryActionPayload
 from telegram_bot.controllers.keyboard_controller import KeyboardController
 from telegram_bot.controllers.message_creator import MessageCreator
 from models.actions import Actions
 from models.messages import Messages
+from controllers.book_controller import BookController
+from operator import itemgetter
+from telegram_bot.fabrics.message_fabric import MessageFabric
 
 from util.filter_query_by_action import create_filter_query_by_action
 
@@ -35,9 +40,12 @@ async def sub_category_search_handler(callback_query: types.CallbackQuery):
 
 async def book_category_search_handler(callback_query: types.CallbackQuery):
     message = callback_query.message
-    message_creator = MessageCreator(
-        "Books check"
-    )
+    action = ButtonAction[ButtonCategoryActionPayload].from_json(callback_query.data)
+
+    books, query_id = itemgetter('books', 'query_id')(BookController.find_by_book_category_and_create_query(action.payload.categry_id))
+
+    message_creator = MessageFabric.create_page_message(books, query_id=query_id)
+
     await message_creator.edit_to(message)
 
 

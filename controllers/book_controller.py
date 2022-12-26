@@ -17,7 +17,11 @@ class BookController:
         BookService.insert(book)
 
     @staticmethod
-    def find_by_title(title):
+    def find_by_title(title: str):
+
+        title = title.lower()
+        title = title.replace('с', 'c')
+
         return BookController.books_without_duplicates(BookController.result_to_list(BookService.find_by_title(title)))
 
     @staticmethod

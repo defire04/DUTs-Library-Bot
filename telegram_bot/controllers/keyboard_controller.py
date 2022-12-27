@@ -1,5 +1,6 @@
 from typing import List
-from telegram_bot.actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction, ButtonPageSortDirectionAction
+from telegram_bot.actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction, \
+    ButtonPageSortDirectionAction
 from controllers.category_controller import CategoryController
 from models.actions import Actions
 from models.category import CategoriesEnum, Category
@@ -18,7 +19,7 @@ class KeyboardController:
         keyboard.insert(KeyboardController.create_sort_button(query_id, sort_direction))
         if pages.get_total_pages_count() - 1 > page_index:
             keyboard.insert(KeyboardController.create_next_button(page_index, query_id))
-        
+
         keyboard.add(KeyboardController.create_to_main_menu_button())
 
         return keyboard
@@ -42,15 +43,18 @@ class KeyboardController:
 
     @staticmethod
     def create_global_categories_keyboard():
-        return KeyboardController.create_categories_keyboard(CategoryController.get_global_categories(), CategoriesEnum.GLOBAL)
-        
+        return KeyboardController.create_categories_keyboard(CategoryController.get_global_categories(),
+                                                             CategoriesEnum.GLOBAL)
+
     @staticmethod
     def create_sub_categories_keyboard(global_id: int):
-        return KeyboardController.create_categories_keyboard(CategoryController.find_sub_categories_by_global_id(global_id), CategoriesEnum.SUB)
+        return KeyboardController.create_categories_keyboard(
+            CategoryController.find_sub_categories_by_global_id(global_id), CategoriesEnum.SUB)
 
     @staticmethod
     def create_book_categories_keyboard(sub_id: int):
-        return KeyboardController.create_categories_keyboard(CategoryController.find_book_categories_by_sub_id(sub_id), CategoriesEnum.BOOK)
+        return KeyboardController.create_categories_keyboard(CategoryController.find_book_categories_by_sub_id(sub_id),
+                                                             CategoriesEnum.BOOK)
 
     @staticmethod
     def create_categories_keyboard(category_list: List[Category], category_type: int):
@@ -60,7 +64,6 @@ class KeyboardController:
             button = InlineKeyboardButton(category.title, callback_data=action.stringify())
             keyboard.add(button)
         return keyboard
-    
 
     @staticmethod
     def create_previous_button(current_page_index: int, query_id: int, sort_direction: int = 0):
@@ -80,7 +83,7 @@ class KeyboardController:
     def create_page_sort_direction_button(text: str, page_index: int, query_id: int, sort_direction: int):
         action = ButtonPageSortDirectionAction(page_index, query_id, sort_direction)
         button = InlineKeyboardButton(text, callback_data=action.stringify())
-        return button 
+        return button
 
     @staticmethod
     def create_to_main_menu_button():
@@ -92,14 +95,13 @@ class KeyboardController:
     def create_sort_button(query_id: int, sort_direction: int = 0):
         button_text = "Sort "
         if sort_direction == 0:
-            button_text+="↕"
+            button_text += "↕"
         if sort_direction == -1:
-            button_text+="⏬"
+            button_text += "⏬"
         if sort_direction == 1:
-            button_text+="⏫"
+            button_text += "⏫"
         button = KeyboardController.create_page_sort_direction_button(button_text, 0, query_id, sort_direction)
         return button
-        
 
     @staticmethod
     async def remove_inline_keyboard(msg: Message):

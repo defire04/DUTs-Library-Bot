@@ -5,6 +5,7 @@ import json
 from util.multimethod import MultipleMeta
 from models.actions import Actions
 
+
 class Payload(ABC):
     @abstractmethod
     def to_shorthand_payload(self) -> dict:
@@ -32,6 +33,7 @@ class ButtonPageActionPayload(metaclass=MultipleMeta):
             "sd": self.sort_direction
         }
 
+
 class ButtonMenuActionPayload:
 
     def __init__(self) -> None:
@@ -39,6 +41,7 @@ class ButtonMenuActionPayload:
 
     def to_shorthand_payload(self):
         return {}
+
 
 class ButtonCategoryActionPayload(metaclass=MultipleMeta):
 
@@ -95,25 +98,28 @@ class ButtonAction(Generic[P]):
             "pl": self.payload.to_shorthand_payload() if self.payload else self.payload
         }).replace(' ', '')
 
+
 class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
     def __init__(self, action_id: int, page_index: int, prepared_collection_id: int, sort_direction: int = 0):
         payload = ButtonPageActionPayload(
             page_index, prepared_collection_id, sort_direction)
         super().__init__(action_id, payload)
 
+
 class ButtonPageChangeAction(ButtonPageAction):
     def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int = 0):
-            super().__init__(Actions.SWITCH_PAGE, page_index, prepared_collection_id, sort_direction)
+        super().__init__(Actions.SWITCH_PAGE, page_index, prepared_collection_id, sort_direction)
+
 
 class ButtonPageSortDirectionAction(ButtonPageAction):
     def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int = 0):
-            super().__init__(Actions.CHANGE_SORT_DIRECTION, page_index, prepared_collection_id, sort_direction)
+        super().__init__(Actions.CHANGE_SORT_DIRECTION, page_index, prepared_collection_id, sort_direction)
+
 
 class ButtonMenuAction(ButtonAction[None]):
     def __init__(self, action: int):
         payload = None
         super().__init__(action, payload)
-
 
 
 class ButtonCategoryAction(ButtonAction[ButtonCategoryActionPayload]):

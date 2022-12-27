@@ -1,5 +1,6 @@
 from controllers.book_controller import BookController
 from controllers.category_controller import CategoryController
+from controllers.sorter_controller import Sorter
 from parser.parser import Parser
 
 # if __name__ == '__main__':
@@ -11,4 +12,8 @@ from parser.parser import Parser
 #     CategoryController.finalize()
 #
 
+for i in BookController.find_by_title("C++"):
+    print(i.year_of_publication)
 
+for i in Sorter.sort_by_year(BookController.find_by_title("C++")):
+    print(i.year_of_publication)

@@ -6,9 +6,14 @@ from models.search_result import PagesResult, SearchResult
 from telegram_bot.actions.action_creator import ButtonAction, ButtonPageActionPayload
 from telegram_bot.controllers.keyboard_controller import KeyboardController
 from telegram_bot.controllers.message_creator import MessageCreator
+from controllers.sorter_controller import Sorter
 from util.xor import XOR
 
-
+sort_functions_by_sort_direction = {
+    0: None,
+    1: Sorter.sort_by_year_reverse,
+    -1: Sorter.sort_by_year
+}
 class MessageFabric:
     @staticmethod
     def create_page_message(books: List[Book], action: ButtonAction[ButtonPageActionPayload] | None = None, query_id: int | None = None) -> MessageCreator:
@@ -25,6 +30,8 @@ class MessageFabric:
             query_id = action.payload.prepared_collection_id
             sort_direction = action.payload.sort_direction
 
+        sorting_function = sort_functions_by_sort_direction[sort_direction]
+        if sorting_function: books = sorting_function(books)
 
         search_result = SearchResult(books, query_id)
         pages = PagesResult(search_result)

@@ -99,8 +99,10 @@ class BookService:
 
     @staticmethod
     def find_books_by_author(author: str):
-        sql = """SELECT * FROM books WHERE author = %s"""
-        BookService.book_connection.cursor.execute(sql, (author,))
+        like_author = """ '%""" + author + """%';"""
+        sql = """SELECT * FROM books WHERE LOWER(author) LIKE""" + like_author.lower()
+        BookService.book_connection.cursor.execute(sql)
+        print(sql)
         tuple_book = BookService.book_connection.cursor.fetchall()
         return tuple_book
 

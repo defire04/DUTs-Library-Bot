@@ -114,3 +114,6 @@ SELECT * from global_category;
 
 SELECT * FROM books WHERE title LIKE '%%';
 
+select * from books;
+SELECT * FROM books WHERE LOWER(author) LIKE '%паск%';
+

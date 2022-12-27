@@ -2,7 +2,6 @@ from typing import List
 
 from datetime import date
 from models.book import Book
-from controllers.book_controller import BookController
 
 
 def sort_year(book):
@@ -21,4 +20,11 @@ class Sorter:
     @staticmethod
     def sort_by_year_reverse(books: List[Book]):
         return sorted(Sorter.sort_by_year(books)[::-1], key=lambda book: book.year_of_publication is None)
-      
+
+    @staticmethod
+    def sort_by_author(books: List[Book]):
+        return sorted(books, key=lambda book: book.author)
+
+    @staticmethod
+    def sort_by_author_reverse(books: List[Book]):
+        return Sorter.sort_by_author(books)[::-1]

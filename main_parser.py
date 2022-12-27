@@ -15,5 +15,11 @@ from parser.parser import Parser
 for i in BookController.find_by_title("C++"):
     print(i.year_of_publication)
 
+print("____________________________________")
+
 for i in Sorter.sort_by_year(BookController.find_by_title("C++")):
+    print(i.year_of_publication)
+print("______________REVERSE_____________________")
+
+for i in Sorter.sort_by_year_reverse(BookController.find_by_title("C++")):
     print(i.year_of_publication)

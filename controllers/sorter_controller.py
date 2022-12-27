@@ -28,3 +28,11 @@ class Sorter:
     @staticmethod
     def sort_by_author_reverse(books: List[Book]):
         return Sorter.sort_by_author(books)[::-1]
+
+    @staticmethod
+    def sort_by_title(books: List[Book]):
+        return sorted(books, key=lambda book: book.title)
+
+    @staticmethod
+    def sort_by_title_reverse(books: List[Book]):
+        return Sorter.sort_by_title(books)[::-1]

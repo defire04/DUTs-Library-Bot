@@ -8,10 +8,8 @@ ADMINS = admins
 
 
 async def process_start_command(msg: types.Message):
-    UserController.add_new_user(msg)
-    if msg.from_user.id in ADMINS:
-        await msg.answer('Добро пожаловать в Админ-Панель! Выберите действие на клавиатуре')
-    else:
-        await msg.answer(**Messages.start_message.get_args())
 
+    UserController.add_new_user(msg)
+
+    await msg.answer(**Messages.start_message.get_args())
     await msg.delete()

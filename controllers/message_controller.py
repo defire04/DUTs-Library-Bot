@@ -10,10 +10,11 @@ class MessageController:
         books_strings = ["По вашему запросу мы нашли такие книги:  "]
         for book in page:
             books_strings.append(
-                            "📖<strong>" + string_trim(str(book.title)) + "</strong>\n" +
-                            "👴Автор: " + string_trim(str(book.author)) + "\n"
-                            "📅Год публикации: " + str(book.year_of_publication) + "\n"
-                            "🧷<a href='" + str(book.link) + "'>Ссылка на книгу</a>")
+                "📖<strong>" + string_trim(str(book.title)) + "</strong>\n" +
+                "👴Автор: " + string_trim(str(book.author)) + "\n"
+                                                              "📅Год публикации: " + str(
+                    book.year_of_publication) + "\n"
+                                                "🧷<a href='" + str(book.link) + "'>Ссылка на книгу</a>")
         return ('\n' + "-" * 60 + "\n").join(books_strings)
 
     @staticmethod
@@ -21,7 +22,7 @@ class MessageController:
         users_strings = []
         for user in users:
             users_strings.append(
-                            "User id:" + str(user.user_id) + '\n'
-                            "Username: " + str(user.username))
+                "User id:" + str(user.user_id) + '\n'
+                                                 "Username: " + str(user.username))
 
-        return ("\n-" * 60 + "\n").join(users_strings)
+        return ('\n' + "-" * 60 + "\n").join(users_strings)

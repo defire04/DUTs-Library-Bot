@@ -79,7 +79,9 @@ CREATE TABLE users(
     user_id INT,
     username VARCHAR(200),
     full_name varchar(200),
-    language varchar(3)
+    role varchar(10)
+
+--     language varchar(3)
 );
 
 SELECT * FROM users;
@@ -113,4 +115,7 @@ SELECT * from global_category;
 
 
 SELECT * FROM books WHERE title LIKE '%%';
+
+select * from books;
+SELECT * FROM books WHERE LOWER(author) LIKE '%паск%';
 

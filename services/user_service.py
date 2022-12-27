@@ -7,8 +7,8 @@ class UserService:
 
     @staticmethod
     def insert(user: User):
-        sql = """INSERT INTO users (user_id, username, full_name) VALUES (%s, %s, %s)"""
-        UserService.user_connection.cursor.execute(sql, (user.user_id, user.username, user.full_name))
+        sql = """INSERT INTO users (user_id, username, full_name, role) VALUES (%s, %s, %s, %s)"""
+        UserService.user_connection.cursor.execute(sql, (user.user_id, user.username, user.full_name, user.role))
         UserService.user_connection.connection.commit()
 
     @staticmethod
@@ -25,6 +25,12 @@ class UserService:
         sql = """SELECT * FROM users """
         UserService.user_connection.cursor.execute(sql)
         return UserService.user_connection.cursor.fetchall()
+
+    @staticmethod
+    def find_by_id(user_id: int):
+        sql = """SELECT * FROM user WHERE id = %s"""
+        UserService.user_connection.cursor.execute(sql, (user_id,))
+        return UserService.user_connection.cursor.fetchall()[0]
 
     @staticmethod
     def finalize():

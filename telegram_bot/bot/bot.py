@@ -36,15 +36,18 @@ dp = Dispatcher(bot, storage=storage)
 ADMINS = admins
 
 admin_buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
-admin_buttons.add("Рассылка")
-admin_buttons.add("Пользователи")
-admin_buttons.add("Найти книгу по названию!")
+admin_buttons.add("Розсилка")
+admin_buttons.add("Користувачі")
+admin_buttons.add("Кількість користувачів")
 
 user_buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
 user_buttons.add("Найти книгу по названию!")
 
 back_buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
 back_buttons.add(types.InlineKeyboardButton(text="Назад"))
+
+back_buttons_to_admin_menu = types.ReplyKeyboardMarkup(resize_keyboard=True)
+back_buttons_to_admin_menu.add(types.InlineKeyboardButton(text="Назад до адмін меню"))
 
 
 class Dialog(StatesGroup):
@@ -93,33 +96,48 @@ async def handle_search_exit(callback_querry: types.CallbackQuery, state: FSMCon
     await callback_querry.message.delete()
 
 
-@dp.message_handler(content_types=['text'], text='Пользователи')
+@dp.message_handler(content_types=['text'], text='Користувачі')
 async def get_users_for_admin(msg: types.Message):
     users: List[User] = []
-    for admin_id in ADMINS:
-        if msg.from_user.id == admin_id:
-            users = UserController.get_users()
-            break
+
+    if msg.from_user.id in ADMINS:
+        users = UserController.get_users()
+    else:
+        await msg.answer('Ви не є адміном!')
 
     message_text = MessageController.prepare_page_message_for_users(users)
     await bot.send_message(msg.from_user.id, message_text)
     await msg.delete()
 
 
-@dp.message_handler(content_types=ContentType.ANY, text='Рассылка')
+@dp.message_handler(content_types=['text'], text='Кількість користувачів')
+async def get_count_users_for_admin(msg: types.Message):
+    users: List[User] = []
+
+    if msg.from_user.id in ADMINS:
+        users = UserController.get_users()
+    else:
+        await msg.answer('Ви не є адміном!')
+
+    message_text = "Кількість користувачів за весь час: " + str(len(users))
+    await bot.send_message(msg.from_user.id, message_text)
+    await msg.delete()
+
+
+@dp.message_handler(content_types=ContentType.ANY, text='Розсилка')
 async def spam(msg: types.Message):
     if msg.from_user.id in ADMINS:
-        await msg.answer('Напишите текст рассылки', reply_markup=back_buttons)
+        await msg.answer('Напишіть текст розсилки', reply_markup=back_buttons_to_admin_menu)
         await Dialog.spam.set()
     else:
-        await msg.answer('Вы не являетесь админом')
+        await msg.answer('Ви не є адміном!')
 
 
 @dp.message_handler(state=Dialog.spam)
 async def start_spam(msg: types.Message, state: FSMContext):
-    if msg.text == 'Назад':
+    if msg.text == 'Назад до адмін меню':
         if msg.from_user.id in ADMINS:
-            await msg.answer('Главное меню', reply_markup=admin_buttons)
+            await msg.answer('Головне меню', reply_markup=admin_buttons)
         else:
             await KeyboardController.remove_inline_keyboard(msg)
             await msg.answer(**Messages.start_message.get_args())
@@ -130,32 +148,28 @@ async def start_spam(msg: types.Message, state: FSMContext):
                 # await bot.send_photo(user.user_id, msg.photo)
                 await bot.send_message(user.user_id, msg.text)
 
-        await msg.answer('Рассылка завершена')
+        await msg.answer('Розсилка завершена', reply_markup=admin_buttons)
         await state.finish()
 
 
-    
-
-@dp.message_handler(content_types=['text'], text='Найти книгу по названию!')
+@dp.message_handler(content_types=['text'], text='Знайти книгу за назвою!')
 async def start_find_books_by_title(msg: types.Message):
-    await msg.answer('Напишите название книги. (Например: С++)', reply_markup=back_buttons)
+    await msg.answer('Напишіть назву книги. (Наприклад: С++)', reply_markup=back_buttons)
     await Dialog.search_books.set()
 
 
 @dp.message_handler(state=Dialog.search_books)
 async def handel_find_book(msg: types.Message, state: FSMContext):
     if msg.text == 'Назад':
-        if msg.from_user.id in ADMINS:
-            await msg.answer('Главное меню', reply_markup=admin_buttons)
-        else:
-            await KeyboardController.remove_inline_keyboard(msg)
-            await msg.answer(**Messages.start_message.get_args())
+
+        await KeyboardController.remove_inline_keyboard(msg)
+        await msg.answer(**Messages.start_message.get_args())
 
         await state.finish()
 
     else:
         if len(msg.text) < 2:
-            await bot.send_message(msg.from_user.id, "Запрос должен содержать минимум 2 символа!")
+            await bot.send_message(msg.from_user.id, "Запит повинен містити щонайменше 2 символи!")
             return
 
         book_list_and_query = BookController.find_by_title_and_create_query(msg.text)
@@ -164,8 +178,8 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
             await msg.answer(**Messages.no_book_message.get_args())
             return
 
-
-        message_creator = MessageFabric.create_page_message(book_list_and_query["books"], query_id=book_list_and_query["query_id"])
+        message_creator = MessageFabric.create_page_message(book_list_and_query["books"],
+                                                            query_id=book_list_and_query["query_id"])
 
         await msg.answer(**message_creator.get_args())
         await state.finish()
@@ -173,12 +187,26 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
 
 @dp.message_handler(state='*', text='Назад')
 async def back(msg: Message):
-    for admin_id in ADMINS:
-        if msg.from_user.id == admin_id:
-            await msg.answer('Главное меню', reply_markup=admin_buttons)
-        else:
-            await KeyboardController.remove_inline_keyboard(msg)
-            await msg.answer(**Messages.start_message.get_args())
+    await KeyboardController.remove_inline_keyboard(msg)
+    await msg.answer(**Messages.start_message.get_args())
+
+
+@dp.message_handler(commands=['give_my_admin'])
+async def admin(msg: types.Message):
+    if msg.from_user.id in ADMINS:
+        await msg.answer("Ласкаво просимо до меню адміністратора!", reply_markup=admin_buttons)
+    else:
+        await msg.answer('Ви не є адміном!')
+
+
+@dp.message_handler(state='*', text='Назад до адмін меню')
+async def back_to_admin(msg: Message):
+    await KeyboardController.remove_inline_keyboard(msg)
+
+    if msg.from_user.id in ADMINS:
+        await msg.answer("Головне меню адміна", reply_markup=admin_buttons)
+    else:
+        await msg.answer('Ви не є адміном!')
 
 
 @dp.callback_query_handler(create_filter_query_by_action(Actions.SWITCH_PAGE))

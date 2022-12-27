@@ -4,9 +4,6 @@ from controllers.book_controller import BookController
 from controllers.user_controller import UserController
 
 from models.messages import Messages
-from resources.config import admins
-
-ADMINS = admins
 
 
 async def process_start_command(msg: types.Message):

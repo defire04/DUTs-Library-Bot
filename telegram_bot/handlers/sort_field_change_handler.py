@@ -15,11 +15,13 @@ async def sort_field_change_handler(callback_query: types.CallbackQuery):
     books = LibraryController.find_books_by_query_id(query_id)
     field_index = action.payload.sort_field
 
-    field_index += 1
-    field_index = 0 if field_index >= fields_count or field_index < 0 else field_index
-    action.payload.sort_field = field_index
     if not action.payload.sort_direction:
         action.payload.sort_direction = 1
+    else:
+        field_index += 1
+        field_index = 0 if field_index >= fields_count or field_index < 0 else field_index
+        action.payload.sort_field = field_index
+    
 
     message = callback_query.message
 

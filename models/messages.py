@@ -34,6 +34,6 @@ class Messages:
     )
 
     global_category_pick_message = MessageCreator(
-        "1",
+        "Оберіть глобальну категорію серед нижче наведених",
         reply_markup=KeyboardController.create_global_categories_keyboard()
     )

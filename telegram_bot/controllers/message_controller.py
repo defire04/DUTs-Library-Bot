@@ -17,11 +17,11 @@ class MessageController:
             books_strings.append(
                 "📖<strong>" + string_trim(str(book.title)) + "</strong>\n" +
                 "👴Автор: " + string_trim(str(book.author)) + "\n"
-                 "📅Год публикации: " + str(book.year_of_publication) + "\n"
-                 "🧷<a href='" + str(book.link) + "'>Ссылка на книгу</a>")
+                 "📅Рік публікації: " + str(book.year_of_publication) + "\n"
+                 "🧷<a href='" + str(book.link) + "'>Посилання на книгу</a>")
 
         books_strings.append(pages_string)
-        
+
         return ('\n' + "-" * 60 + "\n").join(books_strings)
 
     @staticmethod

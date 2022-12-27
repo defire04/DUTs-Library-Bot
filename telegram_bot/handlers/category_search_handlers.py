@@ -19,7 +19,7 @@ async def global_category_search_handler(callback_query: types.CallbackQuery):
     action = ButtonAction[ButtonCategoryActionPayload].from_json(callback_query.data)
     id = action.payload.categry_id
     message_creator = MessageCreator(
-        "2",
+        "Тепер оберіть підкатегорію з нижче наведених",
         reply_markup=KeyboardController.create_sub_categories_keyboard(id)
     )
     await message_creator.edit_to(message)
@@ -28,9 +28,8 @@ async def sub_category_search_handler(callback_query: types.CallbackQuery):
     message = callback_query.message
     action = ButtonAction[ButtonCategoryActionPayload].from_json(callback_query.data)
     id = action.payload.categry_id
-    print('3')
     message_creator = MessageCreator(
-        "3",
+        "Оберіть категорію з якої б ви хотіли почитати книги",
         reply_markup=KeyboardController.create_book_categories_keyboard(id)
     )
     await message_creator.edit_to(message)

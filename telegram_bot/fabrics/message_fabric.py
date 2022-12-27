@@ -54,7 +54,8 @@ class MessageFabric:
 
         keyboard = KeyboardController.create_pages_keyboard(pages, page_index, sort_direction, sort_fields)
 
-        message_text = MessageController.prepare_page_message(pages.get_page(page_index))
+        message_text = MessageController.prepare_page_message(pages.get_page(page_index),
+        page_index+1, pages.get_total_pages_count())
 
         return MessageCreator(message_text, keyboard)
         

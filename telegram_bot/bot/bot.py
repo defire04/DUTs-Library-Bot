@@ -21,6 +21,7 @@ from telegram_bot.controllers.library_controller import LibraryController
 from telegram_bot.controllers.message_controller import MessageController
 
 from telegram_bot.handlers.category_search_handlers import *
+from telegram_bot.handlers.process_help_info_command import process_help_info_command
 from telegram_bot.handlers.process_main_menu_command import process_main_menu_command
 from telegram_bot.handlers.process_start_command import process_start_command
 from telegram_bot.handlers.sort_direction_change_handler import sort_direction_change_handler
@@ -38,9 +39,6 @@ admin_buttons.add("Розсилка")
 admin_buttons.add("Користувачі")
 admin_buttons.add("Кількість користувачів")
 
-user_buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
-user_buttons.add("Найти книгу по названию!")
-
 back_buttons = types.ReplyKeyboardMarkup(resize_keyboard=True)
 back_buttons.add(types.InlineKeyboardButton(text="Назад"))
 
@@ -56,6 +54,7 @@ class Dialog(StatesGroup):
 
 dp.register_message_handler(commands=['start'], callback=process_start_command)
 dp.register_message_handler(commands=['menu'], callback=process_main_menu_command)
+dp.register_message_handler(commands=['help'], callback=process_help_info_command)
 
 dp.register_callback_query_handler(
     open_category_search_handler,
@@ -147,17 +146,10 @@ async def start_spam(msg: types.Message, state: FSMContext):
     else:
         for user in UserController.get_users():
             if user.user_id not in ADMINS:
-                # await bot.send_photo(user.user_id, msg.photo)
                 await bot.send_message(user.user_id, msg.text)
 
         await msg.answer('Розсилка завершена', reply_markup=admin_buttons)
         await state.finish()
-
-
-# @dp.message_handler(content_types=['text'], text='Знайти книгу за назвою!')
-# async def start_find_books_by_title(msg: types.Message):
-#     await msg.answer('Напишіть назву книги. (Наприклад: С++)', reply_markup=back_buttons)
-#     await Dialog.search_books.set()
 
 
 @dp.message_handler(state=Dialog.search_books)
@@ -190,7 +182,7 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
 @dp.message_handler(state='*', text='Назад')
 async def back(msg: Message):
     await KeyboardController.remove_inline_keyboard(msg)
-    await msg.answer(**Messages.start_message.get_args())
+    await msg.answer(**Messages.main_menu_message.get_args())
 
 
 @dp.message_handler(commands=['give_my_admin'])

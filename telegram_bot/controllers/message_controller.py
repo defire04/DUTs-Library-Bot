@@ -6,14 +6,22 @@ from util.util import string_trim
 
 class MessageController:
     @staticmethod
-    def prepare_page_message(page: List[Book]):
+    def prepare_page_message(page: List[Book], current_page: int, total_pages: int):
         books_strings = ["На ваш запит ми знайшли такі книги:  "]
+        pages_string = """Сторінка: {current_page} з {total_pages}""".format(
+            current_page=str(current_page),
+            total_pages=str(total_pages)
+        )
+        
         for book in page:
             books_strings.append(
                 "📖<strong>" + string_trim(str(book.title)) + "</strong>\n" +
                 "👴Автор: " + string_trim(str(book.author)) + "\n"
-                 "📅Год публикации: " + str(book.year_of_publication) + "\n"
-                 "🧷<a href='" + str(book.link) + "'>Ссылка на книгу</a>")
+                 "📅Рік публікації: " + str(book.year_of_publication) + "\n"
+                 "🧷<a href='" + str(book.link) + "'>Посилання на книгу</a>")
+
+        books_strings.append(pages_string)
+
         return ('\n' + "-" * 60 + "\n").join(books_strings)
 
     @staticmethod

@@ -176,6 +176,14 @@ class Parser:
         return dict_with_book_characteristics
 
     @staticmethod
+    def get_download_link(url):
+        req = requests.get(url)
+        soup = BeautifulSoup(req.content, "html.parser")
+
+        return soup.select("embed")[0].get("src")
+
+
+    @staticmethod
     def insert_book_to_db(dict_with_book_characteristics):
 
         global_category_id = CategoryController.insert_global_category_and_return(dict_with_book_characteristics["global_category"])
@@ -203,7 +211,9 @@ class Parser:
         book.added = dict_with_book_characteristics['Створено: ']
         book.classification_id = dict_with_book_characteristics['book_category']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
-        book.link = dict_with_book_characteristics['link_to_book']
+
+        book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
+
         book.sub_category = dict_with_book_characteristics['sub_category']
         book.global_category = dict_with_book_characteristics['global_category']
 

@@ -12,4 +12,5 @@ from parser.parser import Parser
 #     CategoryController.finalize()
 #
 
+Parser.get_download_link("https://www.dut.edu.ua/uploads/l_1713_19272088.pdf")
 

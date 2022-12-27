@@ -4,15 +4,22 @@ from telegram_bot.actions.action_creator import ButtonAction, ButtonPageActionPa
 from telegram_bot.controllers.library_controller import LibraryController
 from telegram_bot.fabrics.message_fabric import MessageFabric
 
+
+direction_next_values_by_current_value = {
+    1: -1,
+    0: 1,
+    -1: 0
+}
+
 async def sort_direction_change_handler(callback_query: types.CallbackQuery):
     message = callback_query.message
     action = ButtonAction[ButtonPageActionPayload].from_json(callback_query.data)
     query_id = action.payload.prepared_collection_id
     books = LibraryController.find_books_by_query_id(query_id)
     direction = action.payload.sort_direction
-    if direction == 1: direction = -1
-    elif direction == 0: direction = 1
-    elif direction == -1: direction = 0
+
+    direction = direction_next_values_by_current_value[direction]
+    
     action.payload.sort_direction = direction
 
     message = callback_query.message

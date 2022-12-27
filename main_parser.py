@@ -13,9 +13,3 @@ from parser.parser import Parser
 #
 
 
-for i in Sorter.sort_by_title(BookController.find_by_title("C++")):
-    print(i.title)
-print("______________REVERSE_____________________")
-
-for i in Sorter.sort_by_title_reverse(BookController.find_by_title("C++")):
-    print(i.title)

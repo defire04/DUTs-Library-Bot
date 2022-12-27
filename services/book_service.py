@@ -57,6 +57,15 @@ class BookService:
         BookService.book_connection.connection.commit()
 
     @staticmethod
+    def count_of_books():
+        sql = "SELECT COUNT(*) FROM books"
+        BookService.book_connection.cursor.execute(sql)
+        BookService.book_connection.connection.commit()
+        tuple_count_of_book = BookService.book_connection.cursor.fetchall()
+        return tuple_count_of_book[0][0]
+
+
+    @staticmethod
     def insert(book):
         sql = """INSERT INTO books (title, author, lang, document_size, year_of_publication, publishing_house, 
         country, number_of_pages, availability_in_the_library, availability_in_electronic_form, added, 

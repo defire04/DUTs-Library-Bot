@@ -1,14 +1,29 @@
 from telegram_bot.controllers.keyboard_controller import KeyboardController
 from telegram_bot.controllers.message_creator import MessageCreator
 
+
 class Messages:
     start_message = MessageCreator(
-        "Добро пожаловать в DUT Library!\nВыберите в меню как вы хотите искать\n",
-        reply_markup=KeyboardController.create_main_menu_keyboard()
+
+        """
+Радий Вас бачити,  {name}! 🎓
+Я бот написано на Python 🐍 для пошуку книг у бібліотеці ДУТ (Державний університет телекомунікацій) по:  
+
+💻 Інформаційних технологій
+🔐 Захисту інформації
+📡 Телекомунікацій
+🗃 Менеджменту та підприємництва
+
+Зараз у боті книг: {book_in_db} 📚
+Кількість користувачів: {count_of_users} 
+    
+Ми надаємо вам можливість вибрати за яким параметром ви хочете шукати. Давайте почнемо?""",
+        reply_markup=KeyboardController.create_start_menu_keyboard()
     )
 
+
     no_book_message = MessageCreator(
-        "Такой книги нет или запрос не верен!",
+        "Такої книги немає чи запит не вірний!",
         reply_markup=KeyboardController.create_back_to_main_menu_keyboard()
     )
 

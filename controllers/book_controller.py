@@ -9,6 +9,10 @@ from controllers.query_controller import QueryController
 class BookController:
 
     @staticmethod
+    def count_of_books():
+        return BookService.count_of_books()
+
+    @staticmethod
     def reset_all_table():
         BookService.reset_all_table()
 

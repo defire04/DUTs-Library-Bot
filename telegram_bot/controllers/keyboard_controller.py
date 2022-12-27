@@ -40,7 +40,7 @@ class KeyboardController:
     @staticmethod
     def create_start_menu_keyboard():
         keyboard = InlineKeyboardMarkup()
-        keyboard.add(KeyboardController.create_back_to_main_menu_keyboard("Поїїїїхааалиии!"))
+        keyboard.add(KeyboardController.create_to_main_menu_button("Поїїїїхааалиии!"))
 
     @staticmethod
     def create_back_to_main_menu_keyboard():

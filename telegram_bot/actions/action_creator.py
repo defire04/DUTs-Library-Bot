@@ -14,23 +14,25 @@ class Payload(ABC):
 
 class ButtonPageActionPayload(metaclass=MultipleMeta):
 
-    def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int):
+    def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int, sort_field: int):
         super().__init__()
         self.page_index = page_index
         self.prepared_collection_id = prepared_collection_id
         self.sort_direction = sort_direction
+        self.sort_field = sort_field
         pass
 
     def __init__(self, rawPayload: dict) -> None:
         super().__init__()
-        self.__init__(rawPayload["pg"], rawPayload["d"], rawPayload["sd"])
+        self.__init__(rawPayload["pg"], rawPayload["d"], rawPayload["sd"], rawPayload["sf"])
         pass
 
     def to_shorthand_payload(self):
         return {
             "pg": self.page_index,
             "d": self.prepared_collection_id,
-            "sd": self.sort_direction
+            "sd": self.sort_direction,
+            "sf": self.sort_field
         }
 
 
@@ -66,7 +68,8 @@ class ButtonCategoryActionPayload(metaclass=MultipleMeta):
 PAYLOADS = {
     Actions.SWITCH_PAGE: ButtonPageActionPayload,
     Actions.TO_CATEGORY_MENU: ButtonCategoryActionPayload,
-    Actions.CHANGE_SORT_DIRECTION: ButtonPageActionPayload
+    Actions.CHANGE_SORT_DIRECTION: ButtonPageActionPayload,
+    Actions.CHNAGE_SORT_FIELD: ButtonPageActionPayload
 }
 
 P = TypeVar('P')
@@ -100,20 +103,24 @@ class ButtonAction(Generic[P]):
 
 
 class ButtonPageAction(ButtonAction[ButtonPageActionPayload]):
-    def __init__(self, action_id: int, page_index: int, prepared_collection_id: int, sort_direction: int = 0):
+    def __init__(self, action_id: int, page_index: int, prepared_collection_id: int, sort_direction: int = 0, sort_field: int = 0):
         payload = ButtonPageActionPayload(
-            page_index, prepared_collection_id, sort_direction)
+            page_index, prepared_collection_id, sort_direction, sort_field)
         super().__init__(action_id, payload)
 
 
 class ButtonPageChangeAction(ButtonPageAction):
-    def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int = 0):
-        super().__init__(Actions.SWITCH_PAGE, page_index, prepared_collection_id, sort_direction)
+    def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int = 0, sort_field: int = 0):
+        super().__init__(Actions.SWITCH_PAGE, page_index, prepared_collection_id, sort_direction, sort_field)
 
 
 class ButtonPageSortDirectionAction(ButtonPageAction):
-    def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int = 0):
-        super().__init__(Actions.CHANGE_SORT_DIRECTION, page_index, prepared_collection_id, sort_direction)
+    def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int = 0, sort_field: int = 0):
+        super().__init__(Actions.CHANGE_SORT_DIRECTION, page_index, prepared_collection_id, sort_direction, sort_field)
+
+class ButtonPageSortFieldAction(ButtonPageAction):
+    def __init__(self, page_index: int, prepared_collection_id: int, sort_direction: int = 0, sort_field: int = 0):
+        super().__init__(Actions.CHNAGE_SORT_FIELD, page_index, prepared_collection_id, sort_direction, sort_field)
 
 
 class ButtonMenuAction(ButtonAction[None]):

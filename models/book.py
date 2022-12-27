@@ -1,6 +1,8 @@
 class Book:
 
     def __init__(self, title):
+        self.link = None
+        self.year_of_publication = None
         self.id = None
         self.title = title
         self.author = None

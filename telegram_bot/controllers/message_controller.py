@@ -7,14 +7,13 @@ from util.util import string_trim
 class MessageController:
     @staticmethod
     def prepare_page_message(page: List[Book]):
-        books_strings = ["По вашему запросу мы нашли такие книги:  "]
+        books_strings = ["На ваш запит ми знайшли такі книги:  "]
         for book in page:
             books_strings.append(
                 "📖<strong>" + string_trim(str(book.title)) + "</strong>\n" +
                 "👴Автор: " + string_trim(str(book.author)) + "\n"
-                                                              "📅Год публикации: " + str(
-                    book.year_of_publication) + "\n"
-                                                "🧷<a href='" + str(book.link) + "'>Ссылка на книгу</a>")
+                 "📅Год публикации: " + str(book.year_of_publication) + "\n"
+                 "🧷<a href='" + str(book.link) + "'>Ссылка на книгу</a>")
         return ('\n' + "-" * 60 + "\n").join(books_strings)
 
     @staticmethod
@@ -23,6 +22,6 @@ class MessageController:
         for user in users:
             users_strings.append(
                 "User id:" + str(user.user_id) + '\n'
-                                                 "Username: " + str(user.username))
+                "Username: " + str(user.username))
 
         return ('\n' + "-" * 60 + "\n").join(users_strings)

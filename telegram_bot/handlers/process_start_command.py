@@ -10,12 +10,11 @@ ADMINS = admins
 
 
 async def process_start_command(msg: types.Message):
-
     UserController.add_new_user(msg)
 
-    await msg.answer(**Messages.start_message.format(name=msg.from_user.full_name,
-                                                     book_in_db=str(BookController.count_of_books()),
-                                                     count_of_users=str(len(UserController.get_users()))
-
-                                                     ).get_args())
+    await msg.answer(**Messages.start_message.format(
+        name=msg.from_user.full_name,
+        book_in_db=str(BookController.count_of_books()),
+        count_of_users=str(len(UserController.get_users()))
+    ).get_args())
     await msg.delete()

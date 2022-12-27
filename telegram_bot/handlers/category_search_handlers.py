@@ -1,6 +1,4 @@
 from aiogram import types
-from controllers.message_controller import MessageController
-from models.search_result import PagesResult, SearchResult
 from telegram_bot.actions.action_creator import ButtonAction, ButtonCategoryActionPayload
 from telegram_bot.controllers.keyboard_controller import KeyboardController
 from telegram_bot.controllers.message_creator import MessageCreator

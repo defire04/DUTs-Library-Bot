@@ -21,6 +21,12 @@ class Messages:
         reply_markup=KeyboardController.create_start_menu_keyboard()
     )
 
+    main_menu_message = MessageCreator(
+        """
+Виберіть спосіб пошуку книг🔍
+        """,
+        reply_markup=KeyboardController.create_main_menu_keyboard()
+    )
 
     no_book_message = MessageCreator(
         "Такої книги немає чи запит не вірний!",

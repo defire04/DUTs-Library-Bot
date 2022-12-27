@@ -29,9 +29,9 @@ class KeyboardController:
     @staticmethod
     def create_main_menu_keyboard():
         search_action = ButtonMenuAction(Actions.START_SEARCH)
-        search_button = InlineKeyboardButton('Search book', callback_data=search_action.stringify())
+        search_button = InlineKeyboardButton('📘 Назва книги', callback_data=search_action.stringify())
         category_action = ButtonMenuAction(Actions.OPEN_CATEGORY_SEARCH)
-        category_button = InlineKeyboardButton('Categories', callback_data=category_action.stringify())
+        category_button = InlineKeyboardButton('📜 Категорії', callback_data=category_action.stringify())
         keyboard = InlineKeyboardMarkup(row_width=2)
         keyboard.add(search_button)
         keyboard.add(category_button)
@@ -41,6 +41,7 @@ class KeyboardController:
     def create_start_menu_keyboard():
         keyboard = InlineKeyboardMarkup()
         keyboard.add(KeyboardController.create_to_main_menu_button("Поїїїїхааалиии!"))
+        return keyboard
 
     @staticmethod
     def create_back_to_main_menu_keyboard():

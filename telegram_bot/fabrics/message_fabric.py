@@ -1,5 +1,5 @@
 from typing import List
-from controllers.message_controller import MessageController
+from telegram_bot.controllers.message_controller import MessageController
 
 from models.book import Book
 from models.search_result import PagesResult, SearchResult

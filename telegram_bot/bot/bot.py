@@ -8,12 +8,9 @@ from aiogram.types import ContentType, Message
 from aiogram.dispatcher.filters.state import State, StatesGroup
 from aiogram.dispatcher import FSMContext
 
-from controllers.book_controller import BookController
 from controllers.category_controller import CategoryController
-from controllers.message_controller import MessageController
 from controllers.query_controller import QueryController
 from controllers.user_controller import UserController
-from models.search_result import PagesResult, SearchResult
 from models.user import User
 
 from resources.config import TOKEN, admins
@@ -21,9 +18,10 @@ from models.category import CategoriesEnum
 
 from telegram_bot.actions.action_creator import ButtonPageActionPayload
 from telegram_bot.controllers.library_controller import LibraryController
-from telegram_bot.fabrics.message_fabric import MessageFabric
+from telegram_bot.controllers.message_controller import MessageController
 
 from telegram_bot.handlers.category_search_handlers import *
+from telegram_bot.handlers.process_main_menu_command import process_main_menu_command
 from telegram_bot.handlers.process_start_command import process_start_command
 from telegram_bot.handlers.sort_direction_change_handler import sort_direction_change_handler
 from telegram_bot.handlers.sort_field_change_handler import sort_field_change_handler
@@ -57,6 +55,8 @@ class Dialog(StatesGroup):
 
 
 dp.register_message_handler(commands=['start'], callback=process_start_command)
+dp.register_message_handler(commands=['menu'], callback=process_main_menu_command)
+
 dp.register_callback_query_handler(
     open_category_search_handler,
     create_filter_query_by_action(Actions.OPEN_CATEGORY_SEARCH)
@@ -82,24 +82,26 @@ dp.register_callback_query_handler(
     create_filter_query_by_action(Actions.CHNAGE_SORT_FIELD)
 )
 
+
 @dp.callback_query_handler(create_filter_query_by_action(Actions.START_SEARCH))
 async def handle_search(callback_querry: types.CallbackQuery):
     await callback_querry.message.delete()
     await Dialog.search_books.set()
-    await callback_querry.message.answer('Ищи', reply_markup=back_buttons)
+    await callback_querry.message.answer(
+        'Введіть назву книги (можна приблизно, наприклад: c++)\nЗапит повинен містити щонайменше 2 символи!',
+        reply_markup=back_buttons)
 
 
 @dp.callback_query_handler(create_filter_query_by_action(Actions.TO_MAIN_MENU))
 async def handle_search_exit(callback_querry: types.CallbackQuery, state: FSMContext):
     await state.finish()
-    await callback_querry.message.answer(**Messages.start_message.get_args())
+    await callback_querry.message.answer(**Messages.main_menu_message.get_args())
     await callback_querry.message.delete()
 
 
 @dp.message_handler(content_types=['text'], text='Користувачі')
 async def get_users_for_admin(msg: types.Message):
     users: List[User] = []
-    msg.from_user.full_name
     if msg.from_user.id in ADMINS:
         users = UserController.get_users()
     else:
@@ -152,10 +154,10 @@ async def start_spam(msg: types.Message, state: FSMContext):
         await state.finish()
 
 
-@dp.message_handler(content_types=['text'], text='Знайти книгу за назвою!')
-async def start_find_books_by_title(msg: types.Message):
-    await msg.answer('Напишіть назву книги. (Наприклад: С++)', reply_markup=back_buttons)
-    await Dialog.search_books.set()
+# @dp.message_handler(content_types=['text'], text='Знайти книгу за назвою!')
+# async def start_find_books_by_title(msg: types.Message):
+#     await msg.answer('Напишіть назву книги. (Наприклад: С++)', reply_markup=back_buttons)
+#     await Dialog.search_books.set()
 
 
 @dp.message_handler(state=Dialog.search_books)
@@ -163,7 +165,7 @@ async def handel_find_book(msg: types.Message, state: FSMContext):
     if msg.text == 'Назад':
 
         await KeyboardController.remove_inline_keyboard(msg)
-        await msg.answer(**Messages.start_message.get_args())
+        await msg.answer(**Messages.main_menu_message.get_args())
 
         await state.finish()
 

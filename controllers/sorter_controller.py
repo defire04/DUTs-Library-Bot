@@ -12,6 +12,18 @@ def sort_year(book):
     return book.year_of_publication
 
 
+def sort_title(book):
+    if not book.title:
+        return ""
+    return book.title
+
+
+def sort_author(book):
+    if not book.author:
+        return ""
+    return book.author
+
+
 class Sorter:
     @staticmethod
     def sort_by_year(books: List[Book]):
@@ -23,7 +35,7 @@ class Sorter:
 
     @staticmethod
     def sort_by_author(books: List[Book]):
-        return sorted(books, key=lambda book: book.author)
+        return sorted(books, key=sort_author)
 
     @staticmethod
     def sort_by_author_reverse(books: List[Book]):

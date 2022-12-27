@@ -3,16 +3,29 @@ from controllers.message_controller import MessageController
 
 from models.book import Book
 from models.search_result import PagesResult, SearchResult
+from models.sorting_field import SortingFieldsEnum
 from telegram_bot.actions.action_creator import ButtonAction, ButtonPageActionPayload
 from telegram_bot.controllers.keyboard_controller import KeyboardController
 from telegram_bot.controllers.message_creator import MessageCreator
 from controllers.sorter_controller import Sorter
 from util.xor import XOR
 
-sort_functions_by_sort_direction = {
-    0: None,
-    1: Sorter.sort_by_year_reverse,
-    -1: Sorter.sort_by_year
+sort_functions_by_sort_type = {
+    SortingFieldsEnum.YEAR: {
+        0: None,
+        1: Sorter.sort_by_year_reverse,
+        -1: Sorter.sort_by_year
+    },
+    SortingFieldsEnum.AUTHOR: {
+        0: None,
+        1: Sorter.sort_by_author,
+        -1: Sorter.sort_by_author_reverse
+    },
+    SortingFieldsEnum.TITLE: {
+        0: None,
+        1: Sorter.sort_by_title,
+        -1: Sorter.sort_by_title_reverse
+    }
 }
 class MessageFabric:
     @staticmethod
@@ -32,7 +45,8 @@ class MessageFabric:
             sort_direction = action.payload.sort_direction
             sort_fields = action.payload.sort_field
 
-        sorting_function = sort_functions_by_sort_direction[sort_direction]
+        sorting_types = sort_functions_by_sort_type[sort_fields]
+        sorting_function =  sorting_types[sort_direction] if sorting_types else None
         if sorting_function: books = sorting_function(books)
 
         search_result = SearchResult(books, query_id)

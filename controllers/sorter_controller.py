@@ -10,6 +10,7 @@ def sort_year(book):
     if not book.year_of_publication:
         return current_year + 1
     return book.year_of_publication
+    
 
 
 class Sorter:

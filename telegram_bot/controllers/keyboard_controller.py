@@ -51,18 +51,24 @@ class KeyboardController:
 
     @staticmethod
     def create_global_categories_keyboard():
-        return KeyboardController.create_categories_keyboard(CategoryController.get_global_categories(),
-                                                             CategoriesEnum.GLOBAL)
+        return KeyboardController.create_categories_keyboard(
+            CategoryController.get_global_categories(),
+            CategoriesEnum.GLOBAL
+        )
 
     @staticmethod
     def create_sub_categories_keyboard(global_id: int):
         return KeyboardController.create_categories_keyboard(
-            CategoryController.find_sub_categories_by_global_id(global_id), CategoriesEnum.SUB)
+            CategoryController.find_sub_categories_by_global_id(global_id),
+            CategoriesEnum.SUB
+        )
 
     @staticmethod
     def create_book_categories_keyboard(sub_id: int):
-        return KeyboardController.create_categories_keyboard(CategoryController.find_book_categories_by_sub_id(sub_id),
-                                                             CategoriesEnum.BOOK)
+        return KeyboardController.create_categories_keyboard(
+            CategoryController.find_book_categories_by_sub_id(sub_id),
+            CategoriesEnum.BOOK
+        )
 
     @staticmethod
     def create_categories_keyboard(category_list: List[Category], category_type: int):

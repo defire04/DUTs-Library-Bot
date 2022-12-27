@@ -61,7 +61,7 @@ class KeyboardController:
         keyboard = KeyboardController.create_categories_keyboard(
             CategoryController.find_sub_categories_by_global_id(global_id), CategoriesEnum.SUB)
         # keyboard.add(KeyboardController.create_open_category_search_button('Назад ◀'))
-        keyboard.insert(KeyboardController.create_to_main_menu_button())
+        keyboard.add(KeyboardController.create_to_main_menu_button())
         return keyboard
 
     @staticmethod
@@ -69,7 +69,7 @@ class KeyboardController:
         keyboard = KeyboardController.create_categories_keyboard(CategoryController.find_book_categories_by_sub_id(sub_id),
                                                              CategoriesEnum.BOOK)
         # keyboard.add(KeyboardController.create_category_button('Назад ◀', CategoriesEnum.SUB, sub))
-        keyboard.insert(KeyboardController.create_to_main_menu_button())
+        keyboard.add(KeyboardController.create_to_main_menu_button())
 
         return keyboard
 
@@ -125,7 +125,7 @@ class KeyboardController:
 
     @staticmethod
     def create_to_main_menu_button(text: str | None = None):
-        button_text = text if text else 'Головне меню ↩'
+        button_text = text if text else 'Меню ↩'
         action = ButtonMenuAction(Actions.TO_MAIN_MENU)
         button = InlineKeyboardButton(button_text, callback_data=action.stringify())
         return button
@@ -145,7 +145,7 @@ class KeyboardController:
 
     @staticmethod
     def create_sort_filed_button(query_id: int, sort_direction: int = 0, sort_object: int = 0):
-        button_text = "Сортувати за"
+        button_text = "Сорт. за "
         sorting_texts = {
             SortingFieldsEnum.AUTHOR: '👴',
             SortingFieldsEnum.TITLE: '📚',

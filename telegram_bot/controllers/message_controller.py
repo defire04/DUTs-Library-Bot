@@ -7,8 +7,8 @@ from util.util import string_trim
 class MessageController:
     @staticmethod
     def prepare_page_message(page: List[Book], current_page: int, total_pages: int):
-        books_strings = ["На ваш запит ми знайшли такі книги:  "]
-        pages_string = """Сторінка: {current_page} з {total_pages}""".format(
+        books_strings = ["За Вашим запитом ми знайшли такі книги:  "]
+        pages_string = """📄 Сторінка: <strong>{current_page}</strong> з <strong>{total_pages}</strong>""".format(
             current_page=str(current_page),
             total_pages=str(total_pages)
         )

@@ -1,6 +1,6 @@
 from typing import List
 from aiogram import types
-from models.user import User
+from models.user import User, Admin
 from services.user_service import UserService
 
 
@@ -18,13 +18,8 @@ class UserController:
         return UserController.result_to_list(UserService.get_users())
 
     @staticmethod
-    def result_to_list(find_result):
-        users: List[User] = []
-
-        for user in find_result:
-            users.append(User.create(*user))
-
-        return users
+    def find_by_id(user_id: int):
+        return User(*UserService.find_by_id(user_id)[0])
 
     @staticmethod
     def add_new_user(user_message: types.Message):
@@ -32,6 +27,22 @@ class UserController:
         if not UserController.check_is_user_in_db(user_message.from_user.id):
             user = User(user_message.from_user.id, user_message.from_user.username, user_message.from_user.full_name)
             UserController.insert(user)
+
+    @staticmethod
+    def add_new_admin(admin_message: types.Message):
+
+        if not UserController.check_is_user_in_db(admin_message.from_user.id):
+            admin = Admin(admin_message.from_user.id, admin_message.from_user.username, admin_message.from_user.full_name)
+            UserController.insert(admin)
+
+    @staticmethod
+    def result_to_list(find_result):
+        users: List[User] = []
+
+        for user in find_result:
+            users.append(User.create(*user))
+
+        return users
 
     @staticmethod
     def finalize():

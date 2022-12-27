@@ -79,7 +79,9 @@ CREATE TABLE users(
     user_id INT,
     username VARCHAR(200),
     full_name varchar(200),
-    language varchar(3)
+    role varchar(10)
+
+--     language varchar(3)
 );
 
 SELECT * FROM users;

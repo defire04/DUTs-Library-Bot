@@ -1,5 +1,5 @@
 from typing import List
-from telegram_bot.actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageAction, \
+from telegram_bot.actions.action_creator import ButtonCategoryAction, ButtonMenuAction, ButtonPageChangeAction, \
     ButtonPageSortDirectionAction
 from controllers.category_controller import CategoryController
 from models.actions import Actions
@@ -75,7 +75,7 @@ class KeyboardController:
 
     @staticmethod
     def create_page_change_button(text: str, page_index: int, query_id: int, sort_direction: int):
-        action = ButtonPageAction(page_index, query_id, sort_direction)
+        action = ButtonPageChangeAction(page_index, query_id, sort_direction)
         button = InlineKeyboardButton(text, callback_data=action.stringify())
         return button
 

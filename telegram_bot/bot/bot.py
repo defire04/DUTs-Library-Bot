@@ -95,7 +95,7 @@ async def handle_search_exit(callback_querry: types.CallbackQuery, state: FSMCon
 @dp.message_handler(content_types=['text'], text='Користувачі')
 async def get_users_for_admin(msg: types.Message):
     users: List[User] = []
-
+    msg.from_user.full_name
     if msg.from_user.id in ADMINS:
         users = UserController.get_users()
     else:

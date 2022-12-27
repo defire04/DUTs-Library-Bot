@@ -8,7 +8,6 @@ class MessageController:
     @staticmethod
     def prepare_page_message(page: List[Book]):
         books_strings = ["По вашему запросу мы нашли такие книги:  "]
-
         for book in page:
             books_strings.append(
                             "📖<strong>" + string_trim(str(book.title)) + "</strong>\n" +

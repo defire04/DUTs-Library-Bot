@@ -26,6 +26,7 @@ from telegram_bot.fabrics.message_fabric import MessageFabric
 from telegram_bot.handlers.category_search_handlers import *
 from telegram_bot.handlers.process_start_command import process_start_command
 from telegram_bot.handlers.sort_direction_change_handler import sort_direction_change_handler
+from telegram_bot.handlers.sort_field_change_handler import sort_field_change_handler
 
 from util.filter_query_by_action import create_filter_query_by_action
 
@@ -73,7 +74,10 @@ dp.register_callback_query_handler(
     sort_direction_change_handler,
     create_filter_query_by_action(Actions.CHANGE_SORT_DIRECTION)
 )
-
+dp.register_callback_query_handler(
+    sort_field_change_handler,
+    create_filter_query_by_action(Actions.CHNAGE_SORT_FIELD)
+)
 
 @dp.callback_query_handler(create_filter_query_by_action(Actions.START_SEARCH))
 async def handle_search(callback_querry: types.CallbackQuery):

@@ -23,12 +23,14 @@ class MessageFabric:
         
         page_index = 0
         sort_direction = 0
+        sort_fields = 0
 
         if action:
 
             page_index = action.payload.page_index
             query_id = action.payload.prepared_collection_id
             sort_direction = action.payload.sort_direction
+            sort_fields = action.payload.sort_field
 
         sorting_function = sort_functions_by_sort_direction[sort_direction]
         if sorting_function: books = sorting_function(books)
@@ -36,7 +38,7 @@ class MessageFabric:
         search_result = SearchResult(books, query_id)
         pages = PagesResult(search_result)
 
-        keyboard = KeyboardController.create_pages_keyboard(pages, page_index, sort_direction)
+        keyboard = KeyboardController.create_pages_keyboard(pages, page_index, sort_direction, sort_fields)
 
         message_text = MessageController.prepare_page_message(pages.get_page(page_index))
 

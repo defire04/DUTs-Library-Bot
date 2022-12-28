@@ -182,11 +182,12 @@ class Parser:
         download_link = ""
         try:
             download_link = soup.select("embed")[0].get("src")
-        except:
+        except Exception as e:
             print("[INDEX ERROR]")
-
+        print(url)
         print(download_link)
-        if not download_link:
+
+        if len(download_link) > 0:
             return "https:" + str(download_link)
         return url
 
@@ -220,10 +221,9 @@ class Parser:
         book.classification_id = dict_with_book_characteristics['book_category']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
 
-        print(dict_with_book_characteristics['link_to_book'])
+
         book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
-        print(dict_with_book_characteristics['link_to_book'])
-        print("===============================================")
+
 
         book.sub_category = dict_with_book_characteristics['sub_category']
         book.global_category = dict_with_book_characteristics['global_category']

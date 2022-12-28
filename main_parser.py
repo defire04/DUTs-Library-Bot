@@ -1,6 +1,5 @@
 from controllers.book_controller import BookController
 from controllers.category_controller import CategoryController
-from controllers.sorter_controller import Sorter
 from parser.parser import Parser
 
 if __name__ == '__main__':

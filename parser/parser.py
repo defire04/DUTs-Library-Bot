@@ -193,7 +193,7 @@ class Parser:
                     download_link += i.get("src")
             else:
                 return url
-        except RuntimeWarning:
+        except Warning:
             pass
 
         return download_link

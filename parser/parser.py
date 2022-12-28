@@ -73,9 +73,17 @@ class Parser:
         soup = BeautifulSoup(req.content, "html.parser")
         links_to_sections = []
 
+        for i in soup.select(".sub_pages_full_list"):
+            for link in i.findAll('a'):
+                CategoryController.insert_global_category_and_return(link.getText())
+
         for i in soup.select(".sub_pages_full_list_ul"):
             for link in i.findAll('a'):
                 links_to_sections.append(Parser.BASE + link.get('href'))
+                # CategoryController.insert_sub_category_and_return(link.getText())
+
+
+
 
         return links_to_sections
 
@@ -220,12 +228,13 @@ class Parser:
         book.classification_id = dict_with_book_characteristics['book_category']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
 
-        print(dict_with_book_characteristics['link_to_book'])
-        book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
-        print(dict_with_book_characteristics['link_to_book'])
-        print("===============================================")
+        # print(dict_with_book_characteristics['link_to_book'])
+        # book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
+        # print(dict_with_book_characteristics['link_to_book'])
+        book.link = dict_with_book_characteristics['link_to_book']
+        # print("===============================================")
 
         book.sub_category = dict_with_book_characteristics['sub_category']
         book.global_category = dict_with_book_characteristics['global_category']
 
-        # BookService.insert(book)
+        BookService.insert(book)

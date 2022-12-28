@@ -82,9 +82,6 @@ class Parser:
                 links_to_sections.append(Parser.BASE + link.get('href'))
                 # CategoryController.insert_sub_category_and_return(link.getText())
 
-
-
-
         return links_to_sections
 
     @staticmethod
@@ -185,19 +182,20 @@ class Parser:
 
     @staticmethod
     def get_download_link(url):
-        req = requests.get(url)
-        soup = BeautifulSoup(req.content, "html.parser", from_encoding="iso-8859-1")
-
         download_link = "https:"
+        try:
+            req = requests.get(url)
 
-        if ".pdf" in url:
-            for i in soup.select(".spacer_3 embed"):
-                download_link += i.get("src")
-        else:
-            return url
-        # print(download_link)
-        # if not download_link:
-        #     return "https:" + str(download_link)
+            soup = BeautifulSoup(req.content, "html.parser", from_encoding="iso-8859-1")
+
+            if ".pdf" in url:
+                for i in soup.select(".spacer_3 embed"):
+                    download_link += i.get("src")
+            else:
+                return url
+        except RuntimeWarning:
+            pass
+
         return download_link
 
     @staticmethod
@@ -230,18 +228,12 @@ class Parser:
         book.classification_id = dict_with_book_characteristics['book_category']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
 
-        # print(dict_with_book_characteristics['link_to_book'])
-
         if not dict_with_book_characteristics['link_to_book']:
             book.link = "No link to this book!"
         else:
             book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
 
-        # print(dict_with_book_characteristics['link_to_book'])
-        book.link = dict_with_book_characteristics['link_to_book']
-        # print("===============================================")
-
         book.sub_category = dict_with_book_characteristics['sub_category']
         book.global_category = dict_with_book_characteristics['global_category']
 
-        # BookService.insert(book)
+        BookService.insert(book)

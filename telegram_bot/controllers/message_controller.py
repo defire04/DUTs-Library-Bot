@@ -7,7 +7,7 @@ from util.util import string_trim
 class MessageController:
     @staticmethod
     def prepare_page_message(page: List[Book], current_page: int, total_pages: int):
-        books_strings = ["За Вашим запитом ми знайшли такі книги:  "]
+        books_strings = ["За вашим запитом ми знайшли такі книги:  "]
         pages_string = """📄 Сторінка: <strong>{current_page}</strong> з <strong>{total_pages}</strong>""".format(
             current_page=str(current_page),
             total_pages=str(total_pages)
@@ -30,6 +30,7 @@ class MessageController:
         for user in users:
             users_strings.append(
                 "User id:" + str(user.user_id) + '\n'
-                "Username: " + str(user.username))
+                "Username: " + str(user.username) + '\n'
+                "Userprofile: " + user.full_name)
 
         return ('\n' + "-" * 60 + "\n").join(users_strings)

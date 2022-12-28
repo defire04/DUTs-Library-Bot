@@ -30,7 +30,7 @@ from telegram_bot.handlers.sort_field_change_handler import sort_field_change_ha
 from util.filter_query_by_action import create_filter_query_by_action
 
 storage = MemoryStorage()
-bot = Bot(token=TOKEN)
+bot = Bot(token=TOKEN, disable_web_page_preview=True)
 dp = Dispatcher(bot, storage=storage)
 ADMINS = admins
 
@@ -146,7 +146,7 @@ async def start_spam(msg: types.Message, state: FSMContext):
     else:
         for user in UserController.get_users():
             if user.user_id not in ADMINS:
-                await bot.send_message(user.user_id, msg.text)
+                await bot.send_message(user.user_id, msg.text, disable_web_page_preview=False)
 
         await msg.answer('Розсилка завершена', reply_markup=admin_buttons)
         await state.finish()

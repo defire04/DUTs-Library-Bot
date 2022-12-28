@@ -179,14 +179,22 @@ class Parser:
     def get_download_link(url):
         req = requests.get(url)
         soup = BeautifulSoup(req.content, "html.parser")
+        download_link = ""
+        try:
+            download_link = soup.select("embed")[0].get("src")
+        except:
+            print("[INDEX ERROR]")
 
-        return soup.select("embed")[0].get("src")
-
+        print(download_link)
+        if not download_link:
+            return "https:" + str(download_link)
+        return url
 
     @staticmethod
     def insert_book_to_db(dict_with_book_characteristics):
 
-        global_category_id = CategoryController.insert_global_category_and_return(dict_with_book_characteristics["global_category"])
+        global_category_id = CategoryController.insert_global_category_and_return(
+            dict_with_book_characteristics["global_category"])
         dict_with_book_characteristics["global_category"] = global_category_id
 
         sub_category_id = CategoryController.insert_sub_category_and_return(
@@ -212,9 +220,12 @@ class Parser:
         book.classification_id = dict_with_book_characteristics['book_category']
         book.document_type = dict_with_book_characteristics['Тип документу: ']
 
+        print(dict_with_book_characteristics['link_to_book'])
         book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
+        print(dict_with_book_characteristics['link_to_book'])
+        print("===============================================")
 
         book.sub_category = dict_with_book_characteristics['sub_category']
         book.global_category = dict_with_book_characteristics['global_category']
 
-        BookService.insert(book)
+        # BookService.insert(book)

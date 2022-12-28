@@ -119,3 +119,7 @@ SELECT * FROM books WHERE title LIKE '%%';
 select * from books;
 SELECT * FROM books WHERE LOWER(author) LIKE '%паск%';
 
+SELECT * FROM books WHERE title = 'Ділове спілкування та культура мовлення';
+
+-- https://www.dut.edu.ua/uploads/l_1156_60134373.djvu
+-- https://www.dut.edu.ua/uploads/l_1044_24663368.doc

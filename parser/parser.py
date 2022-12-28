@@ -186,17 +186,19 @@ class Parser:
     @staticmethod
     def get_download_link(url):
         req = requests.get(url)
-        soup = BeautifulSoup(req.content, "html.parser")
-        download_link = ""
-        try:
-            download_link = soup.select("embed")[0].get("src")
-        except:
-            print("[INDEX ERROR]")
+        soup = BeautifulSoup(req.content, "html.parser", from_encoding="iso-8859-1")
 
-        print(download_link)
-        if not download_link:
-            return "https:" + str(download_link)
-        return url
+        download_link = "https:"
+
+        if ".pdf" in url:
+            for i in soup.select(".spacer_3 embed"):
+                download_link += i.get("src")
+        else:
+            return url
+        # print(download_link)
+        # if not download_link:
+        #     return "https:" + str(download_link)
+        return download_link
 
     @staticmethod
     def insert_book_to_db(dict_with_book_characteristics):
@@ -229,7 +231,12 @@ class Parser:
         book.document_type = dict_with_book_characteristics['Тип документу: ']
 
         # print(dict_with_book_characteristics['link_to_book'])
-        # book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
+
+        if not dict_with_book_characteristics['link_to_book']:
+            book.link = "No link to this book!"
+        else:
+            book.link = Parser.get_download_link(dict_with_book_characteristics['link_to_book'])
+
         # print(dict_with_book_characteristics['link_to_book'])
         book.link = dict_with_book_characteristics['link_to_book']
         # print("===============================================")
@@ -237,4 +244,4 @@ class Parser:
         book.sub_category = dict_with_book_characteristics['sub_category']
         book.global_category = dict_with_book_characteristics['global_category']
 
-        BookService.insert(book)
+        # BookService.insert(book)
